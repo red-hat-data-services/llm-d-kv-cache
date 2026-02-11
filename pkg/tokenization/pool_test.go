@@ -18,9 +18,6 @@ limitations under the License.
 package tokenization
 
 import (
-	"context"
-	"math/rand"
-	"strings"
 	"testing"
 	"time"
 
@@ -29,27 +26,15 @@ import (
 	"github.com/stretchr/testify/require"
 	"k8s.io/client-go/util/workqueue"
 
-	preprocessing "github.com/llm-d/llm-d-kv-cache/pkg/preprocessing/chat_completions"
+	types "github.com/llm-d/llm-d-kv-cache/pkg/tokenization/types"
 )
-
-const (
-	benchmarkMaxWords    = 1_000
-	benchmarkWordLength  = 2
-	benchmarkSeed        = 42
-	benchmarkWorkerCount = 5
-)
-
-var benchmarkModels = []string{
-	"google-bert/bert-base-uncased",
-	"openai-community/gpt2",
-}
 
 // MockTokenizer implements the Tokenizer interface for testing.
 type MockTokenizer struct {
 	mock.Mock
 }
 
-func (m *MockTokenizer) RenderChat(renderReq *preprocessing.RenderChatRequest) ([]uint32, []preprocessing.Offset, error) {
+func (m *MockTokenizer) RenderChat(renderReq *types.RenderChatRequest) ([]uint32, []types.Offset, error) {
 	args := m.Called(renderReq)
 	tokenIface := args.Get(0)
 	if tokenIface == nil {
@@ -63,14 +48,14 @@ func (m *MockTokenizer) RenderChat(renderReq *preprocessing.RenderChatRequest) (
 	if offsetIface == nil {
 		return nil, nil, args.Error(2)
 	}
-	offsets, ok := offsetIface.([]preprocessing.Offset)
+	offsets, ok := offsetIface.([]types.Offset)
 	if !ok {
-		panic("MockTokenizer.RenderChat: expected []preprocessing.Offset from mock, got unexpected type")
+		panic("MockTokenizer.RenderChat: expected []types.Offset from mock, got unexpected type")
 	}
 	return tokens, offsets, args.Error(2)
 }
 
-func (m *MockTokenizer) Render(prompt string) ([]uint32, []preprocessing.Offset, error) {
+func (m *MockTokenizer) Render(prompt string) ([]uint32, []types.Offset, error) {
 	args := m.Called(prompt)
 	tokenIface := args.Get(0)
 	if tokenIface == nil {
@@ -84,9 +69,9 @@ func (m *MockTokenizer) Render(prompt string) ([]uint32, []preprocessing.Offset,
 	if offsetIface == nil {
 		return nil, nil, args.Error(2)
 	}
-	offsets, ok := offsetIface.([]preprocessing.Offset)
+	offsets, ok := offsetIface.([]types.Offset)
 	if !ok {
-		panic("MockTokenizer.Render: expected []preprocessing.Offset from mock, got unexpected type")
+		panic("MockTokenizer.Render: expected []types.Offset from mock, got unexpected type")
 	}
 	return tokens, offsets, args.Error(2)
 }
@@ -103,7 +88,7 @@ func TestPool_ProcessTask(t *testing.T) {
 	mockTokenizer := &MockTokenizer{}
 
 	pool := &Pool{
-		modelName: testModelName,
+		modelName: "test-model",
 		workers:   1,
 		tokenizer: mockTokenizer,
 	}
@@ -114,7 +99,7 @@ func TestPool_ProcessTask(t *testing.T) {
 
 	// Setup specific mock return values
 	expectedTokens := []uint32{12345, 67890, 11111}
-	expectedOffsets := []preprocessing.Offset{{0, 5}, {6, 11}}
+	expectedOffsets := []types.Offset{{0, 5}, {6, 11}}
 
 	mockTokenizer.On("Render", task.Prompt).
 		Return(expectedTokens, expectedOffsets, nil)
@@ -136,7 +121,7 @@ func TestPool_WorkerLoop(t *testing.T) {
 		"successful task processing": {
 			setupMocks: func(mt *MockTokenizer) {
 				mt.On("Render", "test prompt").
-					Return([]uint32{1, 2, 3}, []preprocessing.Offset{{0, 4}}, nil)
+					Return([]uint32{1, 2, 3}, []types.Offset{{0, 4}}, nil)
 			},
 			genTasks: func() ([]Task, chan tokenizationResponse) {
 				return []Task{{Prompt: "test prompt"}}, nil
@@ -146,7 +131,7 @@ func TestPool_WorkerLoop(t *testing.T) {
 		"task with result channel": {
 			setupMocks: func(mt *MockTokenizer) {
 				mt.On("Render", "test with channel").
-					Return([]uint32{10, 20, 30}, []preprocessing.Offset{{0, 4}}, nil)
+					Return([]uint32{10, 20, 30}, []types.Offset{{0, 4}}, nil)
 			},
 			genTasks: func() ([]Task, chan tokenizationResponse) {
 				ch := make(chan tokenizationResponse, 1)
@@ -177,7 +162,7 @@ func TestPool_WorkerLoop(t *testing.T) {
 				for i := range 5 {
 					prompt := "prompt " + string(rune('a'+i))
 					tokens := []uint32{uint32(i), uint32(i + 1)} //nolint:gosec // test code
-					offsets := []preprocessing.Offset{{0, 6}}
+					offsets := []types.Offset{{0, 6}}
 
 					mt.On("Render", prompt).
 						Return(tokens, offsets, nil).Once()
@@ -201,7 +186,7 @@ func TestPool_WorkerLoop(t *testing.T) {
 			setupMocks: func(mt *MockTokenizer) {
 				// Mock will fail every time, causing retries
 				mt.On("Render", "failing prompt").Return(
-					[]uint32{}, []preprocessing.Offset{}, assert.AnError)
+					[]uint32{}, []types.Offset{}, assert.AnError)
 			},
 			genTasks: func() ([]Task, chan tokenizationResponse) {
 				ch := make(chan tokenizationResponse, 1)
@@ -232,7 +217,7 @@ func TestPool_WorkerLoop(t *testing.T) {
 
 			tt.setupMocks(mockTokenizer)
 			pool := &Pool{
-				modelName: testModelName,
+				modelName: "test-model",
 				workers:   1,
 				queue:     workqueue.NewTypedRateLimitingQueue(workqueue.DefaultTypedControllerRateLimiter[Task]()),
 				tokenizer: mockTokenizer,
@@ -254,149 +239,6 @@ func TestPool_WorkerLoop(t *testing.T) {
 
 			// Assert expectations
 			mockTokenizer.AssertExpectations(t)
-		})
-	}
-}
-
-func TestPool_RunIntegration(t *testing.T) {
-	if testing.Short() {
-		t.Skip("Skipping tokenizer integration test in short mode")
-	}
-
-	prompts := []string{"hello world", "this is a test", "unicode test: 世界"}
-
-	config := &Config{
-		ModelName:         testModelName,
-		WorkersCount:      5,
-		HFTokenizerConfig: DefaultHFTokenizerConfig(),
-	}
-
-	// Create context for the pool
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	pool, err := NewTokenizationPool(ctx, config)
-	require.NoError(t, err)
-
-	for _, prompt := range prompts {
-		pool.EnqueueTokenization(prompt)
-	}
-
-	// Run pool
-	done := make(chan struct{})
-	go func() {
-		defer close(done)
-		pool.Run(ctx)
-	}()
-
-	time.Sleep(2 * time.Second)
-	cancel()
-	<-done
-}
-
-func generateRandomSentence(wordLength, maxWords int, rng *rand.Rand) string {
-	numWords := rng.Intn(maxWords) + 1
-	words := make([]string, numWords)
-
-	for i := range numWords {
-		word := make([]byte, wordLength)
-		for j := range wordLength {
-			word[j] = byte('a' + rng.Intn(26))
-		}
-		words[i] = string(word)
-	}
-
-	return strings.Join(words, " ")
-}
-
-func setupStressTest(b *testing.B, modelName string) *Pool {
-	b.Helper()
-
-	config := &Config{
-		ModelName:         modelName,
-		WorkersCount:      benchmarkWorkerCount,
-		HFTokenizerConfig: DefaultHFTokenizerConfig(),
-	}
-
-	pool, err := NewTokenizationPool(context.Background(), config)
-	require.NoError(b, err)
-	return pool
-}
-
-func BenchmarkAsyncTokenizationStress(b *testing.B) {
-	if testing.Short() {
-		b.Skip("Skipping tokenizer integration test in short mode")
-	}
-
-	for _, modelName := range benchmarkModels {
-		b.Run(modelName, func(b *testing.B) {
-			pool := setupStressTest(b, modelName)
-
-			// Return RNG for on-demand prompt generation
-			rng := rand.New(rand.NewSource(benchmarkSeed)) //nolint:gosec // Test code - weak random is acceptable
-
-			// Generate and enqueue prompts on-the-fly to avoid memory bloat
-			for range b.N {
-				prompt := generateRandomSentence(benchmarkWordLength, benchmarkMaxWords, rng)
-				pool.EnqueueTokenization(prompt)
-			}
-
-			// Create context for the pool
-			ctx, cancel := context.WithCancel(context.Background())
-
-			// Run pool
-			go pool.Run(ctx)
-
-			b.ResetTimer()
-
-			// when pool gets empty pool.queue.Len() == 0 call cancel to the context:
-			for pool.queue.Len() > 0 {
-				time.Sleep(100 * time.Millisecond)
-			}
-
-			b.StopTimer()
-			cancel()
-
-			frequency := float64(b.N) / b.Elapsed().Seconds()
-			b.Logf("%s - Processed %d tasks in %v (%.2f tasks/sec)",
-				modelName, b.N, b.Elapsed(), frequency)
-		})
-	}
-}
-
-func BenchmarkSyncTokenizationStress(b *testing.B) {
-	if testing.Short() {
-		b.Skip("Skipping tokenizer integration test in short mode")
-	}
-
-	for _, modelName := range benchmarkModels {
-		b.Run(modelName, func(b *testing.B) {
-			pool := setupStressTest(b, modelName)
-
-			// Return RNG for on-demand prompt generation
-			rng := rand.New(rand.NewSource(benchmarkSeed)) //nolint:gosec // Test code - weak random is acceptable
-
-			// Create context for the pool
-			ctx, cancel := context.WithCancel(context.Background())
-
-			// Run pool
-			go pool.Run(ctx)
-
-			// Now that workers are running, reset benchmark timer
-			b.ResetTimer()
-
-			// Submit tokenization requests in a loop until limit
-			for i := 0; b.Loop(); i++ {
-				prompt := generateRandomSentence(benchmarkWordLength, benchmarkMaxWords, rng)
-				pool.Tokenize(nil, prompt)
-			}
-
-			b.StopTimer()
-			cancel()
-
-			frequency := float64(b.N) / b.Elapsed().Seconds()
-			b.Logf("%s - Processed %d tasks in %v (%.2f tasks/sec)",
-				modelName, b.N, b.Elapsed(), frequency)
 		})
 	}
 }

@@ -1,43 +1,58 @@
-name: CI - Release - UDS Tokenizer Image
+name: CI - Build UDS Tokenizer Image
 
 on:
+  pull_request:
+    branches:
+      - main
   push:
-    tags:
-      - 'v*'  # Runs when a tag like v0.1.0 is pushed
-  release:
-    types: [published]  # Also runs when a GitHub release is published
-  workflow_dispatch:  # Allow manual trigger from GitHub UI
+    branches:
+      - main
 
 jobs:
-  docker-build-and-push:
+  docker-build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
-      - name: Determine tag name
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        if: github.event_name == 'push'
+        run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+        shell: bash
+
+      - name: Determine image tag
         id: tag
         run: |
-          if [[ "${GITHUB_EVENT_NAME}" == "release" ]]; then
-            echo "tag=${GITHUB_REF##refs/tags/}" >> "$GITHUB_OUTPUT"
-          elif [[ "${GITHUB_REF}" == refs/tags/* ]]; then
-            echo "tag=${GITHUB_REF##refs/tags/}" >> "$GITHUB_OUTPUT"
+          if [[ "${{ github.event_name }}" == "push" ]]; then
+            SHA="${{ github.sha }}"
+            SHORT_SHA="${SHA:0:7}"
+            echo "tag=${SHORT_SHA}" >> "$GITHUB_OUTPUT"
+            echo "image=ghcr.io/${{ github.repository_owner }}/llm-d-uds-tokenizer:${SHORT_SHA}" >> "$GITHUB_OUTPUT"
           else
-            echo "tag=latest" >> "$GITHUB_OUTPUT"
+            echo "tag=pr-${{ github.event.pull_request.number }}" >> "$GITHUB_OUTPUT"
+            echo "image=llm-d-uds-tokenizer:pr-${{ github.event.pull_request.number }}" >> "$GITHUB_OUTPUT"
           fi
         shell: bash
 
-      - name: Build and push UDS tokenizer image
-        uses: ./.github/actions/docker-build-and-push
-        with:
-          tag: ${{ steps.tag.outputs.tag }}
-          image-name: llm-d-uds-tokenizer
-          registry: ghcr.io/llm-d
-          github-token: ${{ secrets.GHCR_TOKEN }}
-          context: services/uds_tokenizer
-          dockerfile: services/uds_tokenizer/Dockerfile
+      - name: Build UDS tokenizer image
+        run: |
+          PUSH_ARG=""
+          if [[ "${{ github.event_name }}" == "push" ]]; then
+            PUSH_ARG="--push"
+          fi
+          docker buildx build \
+            --platform linux/amd64 \
+            -t ${{ steps.tag.outputs.image }} \
+            ${PUSH_ARG} \
+            -f services/uds_tokenizer/Dockerfile \
+            services/uds_tokenizer
+        shell: bash
 
       - name: Run Trivy scan
+        if: github.event_name == 'push'
         uses: ./.github/actions/trivy-scan
         with:
-          image: ghcr.io/llm-d/llm-d-uds-tokenizer:${{ steps.tag.outputs.tag }}
+          image: ${{ steps.tag.outputs.image }}

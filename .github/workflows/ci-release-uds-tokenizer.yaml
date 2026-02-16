@@ -37,22 +37,19 @@ jobs:
           fi
         shell: bash
 
-      - name: Build UDS tokenizer image
-        run: |
-          PUSH_ARG=""
-          if [[ "${{ github.event_name }}" == "push" ]]; then
-            PUSH_ARG="--push"
-          fi
-          docker buildx build \
-            --platform linux/amd64 \
-            -t ${{ steps.tag.outputs.image }} \
-            ${PUSH_ARG} \
-            -f services/uds_tokenizer/Dockerfile \
-            services/uds_tokenizer
-        shell: bash
+      - name: Build and push UDS tokenizer image
+        uses: ./.github/actions/docker-build-and-push
+        with:
+          tag: ${{ steps.tag.outputs.tag }}
+          image-name: llm-d-uds-tokenizer
+          registry: ghcr.io/${{ github.repository_owner }}
+          github-token: ${{ secrets.GHCR_TOKEN }}
+          context: services/uds_tokenizer
+          dockerfile: services/uds_tokenizer/Dockerfile
+          platform: linux/amd64
 
       - name: Run Trivy scan
         if: github.event_name == 'push'
         uses: ./.github/actions/trivy-scan
         with:
-          image: ${{ steps.tag.outputs.image }}
+          image: ghcr.io/${{ github.repository_owner }}/llm-d-uds-tokenizer:${{ steps.tag.outputs.tag }}

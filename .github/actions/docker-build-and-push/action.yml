@@ -21,6 +21,10 @@ inputs:
     required: false
     description: Path to Dockerfile relative to context (defaults to Dockerfile in context)
     default: ''
+  platform:
+    required: false
+    description: Target platform(s) for build (e.g., linux/amd64, linux/amd64,linux/arm64)
+    default: 'linux/amd64'
 runs:
   using: "composite"
   steps:
@@ -32,6 +36,7 @@ runs:
       shell: bash
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
+        GITHUB_ACTOR: ${{ github.actor }}
 
     - name: Print image info
       run: |
@@ -51,7 +56,7 @@ runs:
           DOCKERFILE_ARG="-f ${DOCKERFILE}"
         fi
         docker buildx build \
-          --platform linux/amd64 \
+          --platform ${PLATFORM} \
           ${DOCKERFILE_ARG} \
           -t "${REGISTRY}/${IMAGE_NAME}:${TAG}" \
           --push "${CONTEXT}"
@@ -62,3 +67,4 @@ runs:
         IMAGE_NAME: ${{ inputs.image-name }}
         TAG: ${{ inputs.tag }}
         CONTEXT: ${{ inputs.context }}
+        PLATFORM: ${{ inputs.platform }}

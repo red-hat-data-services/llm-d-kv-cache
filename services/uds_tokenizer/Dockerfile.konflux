@@ -23,7 +23,7 @@ WORKDIR /app
 
 # Copy dependencies and install them
 COPY requirements.txt /app/requirements.txt
-RUN pip install --no-cache-dir --no-build-isolation -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Runtime stage
 FROM --platform=$TARGETPLATFORM registry.access.redhat.com/ubi9/python-312:9.7

@@ -34,7 +34,7 @@ spec:
   - name: path-context
     value: services/uds_tokenizer
   - name: prefetch-input
-    value: '[{"type": "pip", "path": "services/uds_tokenizer", "requirements_files": ["requirements.txt"]}]'
+    value: '[{"type": "pip", "path": "services/uds_tokenizer", "requirements_files": ["requirements.txt"], "binary": {}}]'
   pipelineSpec:
     description: |
       This pipeline is ideal for building container images from a Containerfile while maintaining trust after pipeline customization.

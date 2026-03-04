@@ -24,7 +24,7 @@ WORKDIR /app
 # Run as root for build stage
 USER root
 
-# use requirments.txt for konflux
+# use requirements.txt for konflux
 COPY requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 

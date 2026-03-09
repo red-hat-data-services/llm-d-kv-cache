@@ -3,8 +3,7 @@ name: CI - UDS Tokenizer Tests
 on:
   pull_request:
     branches:
-      - main
-      - dev
+      - main_2
     paths:
       - 'services/uds_tokenizer/**'
       - 'api/tokenizerpb/tokenizer.proto'

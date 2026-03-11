@@ -3,11 +3,10 @@ name: CI - Build UDS Tokenizer Image
 on:
   pull_request:
     branches:
-      - main
+      - main_2
   push:
     branches:
-      - main
-
+      - main_2
 jobs:
   docker-build:
     runs-on: ubuntu-latest

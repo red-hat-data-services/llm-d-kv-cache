@@ -3,8 +3,7 @@ name: CI - PR Checks
 on:
   pull_request:
     branches:
-      - main
-      - dev
+      - main_2
 
 jobs:
   lint-and-test:

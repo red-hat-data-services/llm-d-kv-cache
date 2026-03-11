@@ -3,7 +3,7 @@ name: Run Examples Test
 on:
   pull_request:
     branches:
-      - main
+      - main_2
 
 jobs:
   run-examples:

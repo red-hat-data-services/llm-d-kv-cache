@@ -80,7 +80,7 @@ regex==2026.2.28
     # via
     #   tiktoken
     #   transformers
-requests==2.32.5
+requests==2.33.0
     # via
     #   huggingface-hub
     #   modelscope

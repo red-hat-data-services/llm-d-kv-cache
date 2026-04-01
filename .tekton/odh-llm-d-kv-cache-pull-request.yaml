@@ -46,9 +46,7 @@ spec:
   - name: path-context
     value: services/uds_tokenizer
   - name: prefetch-input
-    value: '[{"type": "pip", "path": "services/uds_tokenizer", "requirements_files": ["requirements.txt"], "binary": {"arch": "x86_64,aarch64", "os": "linux"}}]'
-  - name: prefetch-mode
-    value: permissive
+    value: '[{"type": "pip", "path": "services/uds_tokenizer", "requirements_files": ["requirements.txt"], "binary": {"arch": "x86_64,aarch64", "os": "linux"}}, {"type": "cargo", "path": "services/uds_tokenizer/tiktoken"}]'
   - name: image-expires-after
     value: 5d
   - name: enable-slack-failure-notification

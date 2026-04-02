@@ -267,17 +267,21 @@ podman build -f Dockerfile.konflux .
 
 ### Dependency Management
 
-- **pyproject.toml**: Defines direct dependencies for the project
-- **requirements.txt**: Generated from `uv.lock` for Konflux builds only
+- **pyproject.toml**: Upstream-owned, defines direct dependencies
+- **uv.lock** and **requirements.txt**: Downstream additions for Konflux builds
 
-To regenerate `requirements.txt` after updating dependencies:
+After syncing upstream `pyproject.toml` changes, regenerate:
 
 ```bash
-# Update dependencies in pyproject.toml
-# Then regenerate the lock file and requirements.txt
 uv lock
-uv export --format requirements-txt --no-hashes --output-file requirements.txt
+# Patch any hash-less PyTorch-index entries in uv.lock (see note below)
+uv export --format requirements-txt --output-file requirements.txt
 ```
+
+> **Note:** The PyTorch CPU wheel registry does not provide hashes for some mirrored
+> packages (e.g. `jinja2`, `markupsafe`, `typing_extensions`). After `uv lock`, check
+> for hash-less entries and add sha256 hashes manually before exporting. Konflux builds
+> require hashes on all dependencies.
 
 ## Kubernetes Deployment
 

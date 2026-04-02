@@ -274,14 +274,21 @@ After syncing upstream `pyproject.toml` changes, regenerate:
 
 ```bash
 uv lock
-# Patch any hash-less PyTorch-index entries in uv.lock (see note below)
+# 1. Patch hash-less PyTorch-index entries in uv.lock (see notes below)
 uv export --format requirements-txt --output-file requirements.txt
+# 2. Convert +cpu named packages to direct URL references in requirements.txt
 ```
 
-> **Note:** The PyTorch CPU wheel registry does not provide hashes for some mirrored
-> packages (e.g. `jinja2`, `markupsafe`, `typing_extensions`). After `uv lock`, check
-> for hash-less entries and add sha256 hashes manually before exporting. Konflux builds
-> require hashes on all dependencies.
+> **Note — missing hashes:** The PyTorch CPU wheel registry does not provide hashes
+> for some mirrored packages (e.g. `jinja2`, `markupsafe`, `typing_extensions`). After
+> `uv lock`, add sha256 hashes manually to hash-less entries in `uv.lock` before
+> exporting.
+>
+> **Note — +cpu packages:** Konflux/cachi2 cannot resolve packages with local version
+> labels like `torch==2.10.0+cpu` from PyPI. After `uv export`, replace these named
+> entries with direct URL wheel references (e.g. `torch @ https://download.pytorch.org/
+> whl/cpu/torch-2.10.0%2Bcpu-cp312-cp312-manylinux_2_28_x86_64.whl`), split per
+> architecture with platform markers.
 
 ## Kubernetes Deployment
 

@@ -63,6 +63,10 @@ RUN mkdir -p /app/tokenizers && chown -R 65532:65532 /app/tokenizers
 RUN mkdir -p /.modelscope && chown -R 65532:65532 /.modelscope
 # Create and set permissions for Hugging Face cache directory
 RUN mkdir -p /.cache && chown -R 65532:65532 /.cache
+# Add non-root user entry so getpwuid(65532) works (required by torch/getpass)
+RUN echo "nonroot:x:65532:65532:nonroot:/home/nonroot:/usr/sbin/nologin" >> /etc/passwd && \
+    mkdir -p /home/nonroot && chown 65532:65532 /home/nonroot
+
 # Set TMPDIR to the UDS socket directory, which is always mounted as a
 # writable emptyDir by KServe — even when readOnlyRootFilesystem is enforced
 ENV TMPDIR=/tmp/tokenizer

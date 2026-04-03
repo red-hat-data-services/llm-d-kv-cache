@@ -63,10 +63,9 @@ RUN mkdir -p /app/tokenizers && chown -R 65532:65532 /app/tokenizers
 RUN mkdir -p /.modelscope && chown -R 65532:65532 /.modelscope
 # Create and set permissions for Hugging Face cache directory
 RUN mkdir -p /.cache && chown -R 65532:65532 /.cache
-# Create a writable temp directory for the non-root user
-# (volume mounts on /tmp subdirs can make /tmp unwritable in some k8s configurations)
-RUN mkdir -p /app/tmp && chown 65532:65532 /app/tmp
-ENV TMPDIR=/app/tmp
+# Set TMPDIR to the UDS socket directory, which is always mounted as a
+# writable emptyDir by KServe — even when readOnlyRootFilesystem is enforced
+ENV TMPDIR=/tmp/tokenizer
 
 # Switch to non-root user
 USER 65532:65532

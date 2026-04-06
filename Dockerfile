@@ -1,100 +1,138 @@
-# Copyright 2025 The llm-d Authors.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-FROM python:3.12-slim AS python-builder
+# =========================================================
+# Stage 1: Python Builder (Multi Arch)
+# =========================================================
+FROM registry.access.redhat.com/ubi9/ubi AS python-builder
 
 ARG TARGETOS=linux
-ARG TARGETARCH=amd64
+ARG TARGETARCH
 
 WORKDIR /workspace
 
-RUN apt-get update && apt-get install -y --no-install-recommends build-essential \
-    gcc g++ gfortran \
-    make cmake pkg-config git\
-    libopenblas-dev libnuma1 libnuma-dev\
-    zlib1g-dev libjpeg-dev \
-    rustc cargo libssl-dev \
-    && rm -rf /var/lib/apt/lists/*
+# Install system deps
+RUN dnf install -y \
+    python3.12 python3.12-devel python3.12-pip \
+    gcc gcc-c++ gfortran make cmake git  \
+    openblas openblas-devel numactl-devel \
+    zlib-devel libjpeg-devel \
+    clang llvm-devel \
+    openssl-devel \
+    && dnf clean all
+
+# Fix openblas symlink
+RUN ln -sf /usr/lib64/libopenblas.so.0 /usr/lib64/libopenblas.so || true
 
 # -----------------------------
-# Python build tools required for s390x
+# Create virtualenv (ALL arch)
+# -----------------------------
+RUN python3.12 -m venv /workspace/build/venv 
+ENV PATH="/workspace/build/venv/bin:$PATH"
+
+# Upgrade base tooling
+RUN python3.12 -m pip install --upgrade pip setuptools wheel
+
+# -----------------------------
+# Python build tools for s390x
 # -----------------------------
 RUN if [ "$TARGETARCH" = "s390x" ]; then \
-        python -m pip install --upgrade pip && \
-        python -m pip install \
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable && \
+        . "$HOME/.cargo/env" && \
+        python3.12 -m pip install \
             "setuptools>=77.0.3,<81.0.0" \
             "setuptools-scm>=8.0" \
             "packaging>=24.2" \
             "pillow==10.4.0" \
             "cryptography==42.0.8" \
-            "setuptools-rust" wheel cffi maturin numpy \
-            cmake pybind11 cython ninja scikit-build-core ; \
-    fi
-# torch (already working)
-RUN if [ "$TARGETARCH" = "s390x" ]; then \
-        python -m pip install "torch==2.10.0+cpu" \
+            "setuptools-rust" nanobind wheel cffi maturin \
+            "numpy==2.4.4" \
+            cmake pybind11 cython ninja scikit-build-core meson-python && \
+        python3.12 -m pip install \
+        "torch==2.10.0+cpu" \
         --index-url https://download.pytorch.org/whl/cpu ; \
     fi
 
-# disable triton (important for s390x)
-ENV VLLM_USE_TRITON=0
-ARG VLLM_BENCHMARK_REPO=https://github.com/vllm-project/vllm.git
-ARG VLLM_BENCHMARK_BRANCH=v0.16.0 
-ARG OPENCV_VERSION=90
-ARG ENABLE_HEADLESS=1
-
-# install vllm
+# Check if pytorch is installed successfully
 RUN if [ "$TARGETARCH" = "s390x" ]; then \
+        python3.12 -c "import torch; print(torch.__version__)" ; \
+    fi
+
+# Env flags
+ENV VLLM_USE_TRITON=0
+ENV BINDGEN_EXTRA_CLANG_ARGS="-I/usr/include"
+ENV GRPC_PYTHON_BUILD_SYSTEM_OPENSSL=1
+ENV GRPC_PYTHON_BUILD_SYSTEM_ZLIB=1
+
+ARG VLLM_BENCHMARK_REPO=https://github.com/vllm-project/vllm.git
+ARG VLLM_BENCHMARK_BRANCH=v0.14.0
+ARG OPENCV_VERSION=90
+ARG OUTLINES_CORE_VERSION=0.2.11
+ENV ENABLE_HEADLESS=1
+
+# ---------------------------------------------
+# Build OpenCV + outlines-core + vLLM on s390x 
+# ---------------------------------------------
+RUN if [ "$TARGETARCH" = "s390x" ]; then \
+        . "$HOME/.cargo/env" && \
+
+        echo "=== OpenCV ===" && \
         git clone --recursive https://github.com/opencv/opencv-python.git -b ${OPENCV_VERSION} && \
         cd opencv-python && \
-        python -m pip install build && \
-        python -m build --wheel --outdir /tmp/wheels && \
-        pip install /tmp/wheels/*.whl && \
-        echo "Building vLLM from source for s390x..." && \
+        python3.12 -m pip install build scikit-build-core && \
+        python3.12 -m build --wheel --outdir /tmp/wheels && \
+        python3.12 -m pip install /tmp/wheels/opencv*.whl && \
+
+        echo "=== outlines-core ===" && \
+        cd /workspace && \
+        git clone https://github.com/dottxt-ai/outlines-core.git && \
+        cd outlines-core && \
+        git checkout tags/${OUTLINES_CORE_VERSION} && \
+        sed -i 's/version = "0.0.0"/version = "'"${OUTLINES_CORE_VERSION}"'"/' Cargo.toml && \
+        python3.12 -m maturin build --release --out /tmp/wheels && \
+        python3.12 -m pip install /tmp/wheels/outlines_core*.whl && \
+
+        echo "=== vLLM ===" && \
+        cd /workspace && \
         git clone --branch ${VLLM_BENCHMARK_BRANCH} ${VLLM_BENCHMARK_REPO} /tmp/vllm && \
         cd /tmp/vllm && \
+
         echo "numpy==2.4.4" > /tmp/constraints.txt && \
+        echo "opencv-python-headless==4.13.0.90" >> /tmp/constraints.txt && \
+
         sed -i '/"torch == 2.10.0"/d' pyproject.toml && \
-    	sed -i '/^license\s*=.*/d' pyproject.toml && \
-    	sed -i '/^\[project\.license\]/,/^\[/d' pyproject.toml && \
-    	sed -i '/license-files/d' pyproject.toml && \
+        sed -i '/^license\s*=.*/d' pyproject.toml && \
+        sed -i '/^\[project\.license\]/,/^\[/d' pyproject.toml && \
+        sed -i '/license-files/d' pyproject.toml && \
         sed -i '/^\[project\]/a license = { text = "Apache-2.0" }' pyproject.toml && \
-    	echo "==== FINAL LICENSE STATE ====" && \
-    	cat pyproject.toml | grep -n license || true && \
-    	echo "=============================" && \
-        VLLM_TARGET_DEVICE=empty python -m pip install -e . --no-build-isolation -c /tmp/constraints.txt  && \
+
+        python3.12 -m pip install /tmp/wheels/opencv*.whl --force-reinstall && \
+
+        VLLM_TARGET_DEVICE=empty python3.12 -m pip install . \
+            --no-build-isolation \
+            -c /tmp/constraints.txt && \
+
         rm -rf /tmp/vllm ; \
     else \
-        echo "Installing vLLM via Python Dep .." ; \
+        echo "Skipping s390x builds for $TARGETARCH" ; \
+    fi
+
+RUN if [ "$TARGETARCH" = "s390x" ]; then \
+        python3.12 -c "import torch, vllm, numpy; print('VLLM OK')" ; \
     fi
 
 COPY Makefile Makefile
 COPY pkg/preprocessing/chat_completions/ pkg/preprocessing/chat_completions/
 
-# -----------------------------
-# Create virtualenv + reuse vLLM
-# -----------------------------
-RUN if [ "$TARGETARCH" = "s390x" ]; then \
-        python -m venv /workspace/build/venv && \
-        echo "/usr/local/lib/python3.12/site-packages" > /workspace/build/venv/lib/python3.12/site-packages/system.pth ;\
+RUN if [ "$TARGETARCH" != "s390x" ]; then \
+        TARGETOS=${TARGETOS} TARGETARCH=${TARGETARCH} make install-python-deps; \
+    else \
+        echo "Skipping install-python-deps for s390x (vLLM already installed)"; \
     fi
 
-RUN TARGETOS=${TARGETOS} TARGETARCH=${TARGETARCH} make install-python-deps
+
+RUN python3.12 -c "import torch, vllm, numpy; print('VLLM OK')"
 
 # Build Stage: using Go 1.24.1 image
-#FROM quay.io/projectquay/golang:1.24 AS builder
-FROM golang:1.24
+FROM registry.access.redhat.com/ubi9/go-toolset:1.24 AS builder
+
 ARG TARGETOS
 ARG TARGETARCH
 
@@ -105,9 +143,19 @@ USER root
 # Install EPEL repository directly and then ZeroMQ, as epel-release is not in default repos.
 # Install all necessary dependencies including Python 3.12 for chat-completions templating.
 # The builder is based on UBI8, so we need epel-release-8.
-RUN dnf install -y 'https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm' && \
-    dnf install -y gcc-c++ libstdc++ libstdc++-devel clang zeromq-devel pkgconfig python3.12-devel python3.12-pip openblas && \
-    dnf clean all
+RUN dnf install -y 'https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm' && \
+    dnf install -y gcc-c++ libstdc++ libstdc++-devel clang zeromq-devel pkgconfig \ 
+    python3.12-devel python3.12-pip openblas openblas-devel && \
+    dnf install -y gcc-toolset-14 && \
+    dnf clean all 
+
+# Fix ld version mismatch
+RUN ln -sf /usr/bin/ld \
+    /opt/rh/gcc-toolset-14/root/usr/libexec/gcc/s390x-redhat-linux/14/ld
+
+# Fix openblas symlink
+RUN ln -sf /usr/lib64/libopenblas.so.0 /usr/lib64/libopenblas.so || true
+ENV PATH=/opt/rh/gcc-toolset-14/root/usr/bin:$PATH
 
 # Copy the Go Modules manifests
 COPY go.mod go.mod
@@ -121,46 +169,56 @@ COPY . .
 
 # Copy this project's own Python source code into the final image
 COPY --from=python-builder /workspace/pkg/preprocessing/chat_completions /workspace/pkg/preprocessing/chat_completions
-RUN make setup-venv
-COPY --from=python-builder /workspace/build/venv/lib/python3.12/site-packages /workspace/build/venv/lib/python3.12/site-packages
-COPY --from=python-builder /usr/local/lib/python3.12/site-packages \
-    /usr/local/lib/python3.12/site-packages
+COPY --from=python-builder /workspace/build/venv /workspace/build/venv
+# Fix python symlink for UBI environment
+RUN ln -sf /usr/bin/python3.12 /workspace/build/venv/bin/python && \
+    ln -sf /usr/bin/python3.12 /workspace/build/venv/bin/python3
+
+ENV PATH=/workspace/build/venv/bin:$PATH
 
 # Set the PYTHONPATH. This mirrors the Makefile's export, ensuring both this project's
 # Python code and the installed libraries (site-packages) are found at runtime.
-ENV PYTHONPATH=/workspace/pkg/preprocessing/chat_completions:/workspace/build/venv/lib/python3.12/site-packages
-RUN python3.12 -c "import tokenizer_wrapper"
+ENV PYTHONPATH=/workspace/pkg/preprocessing/chat_completions:/workspace/build/venv/lib/python3.12/site-packages:\
+/workspace/build/venv/lib64/python3.12/site-packages
 
+RUN /workspace/build/venv/bin/python -c "import tokenizer_wrapper" && \
+    echo "tokenizer_wrapper OK"
 RUN make build
 
 # Use distroless as minimal base image to package the manager binary
 # Refer to https://github.com/GoogleContainerTools/distroless for more details
 FROM registry.access.redhat.com/ubi9/ubi:latest
 WORKDIR /
-# Install zeromq runtime library needed by the manager.
-# The final image is UBI9, so we need epel-release-9.
 USER root
+
 RUN dnf install -y 'https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm' && \
-    dnf install -y zeromq libxcrypt-compat python3.12 python3.12-pip openblas openblas-devel libgomp && \
+    dnf install -y zeromq libxcrypt-compat python3.12 python3.12-pip \
+    openblas openblas-devel libgomp \
+    gcc-toolset-14 libjpeg-turbo && \
     dnf clean all
 
-# Ensure correct soname exists
+ENV LD_LIBRARY_PATH=/opt/rh/gcc-toolset-14/root/usr/lib64:$LD_LIBRARY_PATH
+ENV PATH=/opt/rh/gcc-toolset-14/root/usr/bin:$PATH
+
+# Fix openblas symlink
 RUN ln -sf /usr/lib64/libopenblas.so /usr/lib64/libopenblas.so.0 || true
 
-# Copy this project's own Python source code into the final image
-COPY --from=python-builder /workspace/pkg/preprocessing/chat_completions /app/pkg/preprocessing/chat_completions
-COPY --from=python-builder /workspace/build/venv/lib/python3.12/site-packages /workspace/build/venv/lib/python3.12/site-packages
-COPY --from=python-builder /usr/local/lib/python3.12/site-packages \
-    /usr/local/lib/python3.12/site-packages
+# Copy Python artifacts from python-builder
+COPY --from=python-builder /workspace/pkg/preprocessing/chat_completions \
+    /app/pkg/preprocessing/chat_completions
+COPY --from=python-builder /workspace/build/venv /workspace/build/venv
 
-# Set the PYTHONPATH. This mirrors the Makefile's export, ensuring both this project's
-# Python code and the installed libraries (site-packages) are found at runtime.
-ENV PYTHONPATH=/app/pkg/preprocessing/chat_completions:/workspace/build/venv/lib/python3.12/site-packages
-RUN python3.12 -c "import tokenizer_wrapper"
+# Fix python symlink AFTER venv is copied ← IMPORTANT
+RUN ln -sf /usr/bin/python3.12 /workspace/build/venv/bin/python && \
+    ln -sf /usr/bin/python3.12 /workspace/build/venv/bin/python3
+
+ENV PATH=/workspace/build/venv/bin:$PATH
+ENV PYTHONPATH=/app/pkg/preprocessing/chat_completions:/workspace/build/venv/lib64/python3.12/site-packages
+
+RUN /workspace/build/venv/bin/python -c "import tokenizer_wrapper"
 
 # Copy the compiled Go application
 COPY --from=builder /workspace/bin/llm-d-kv-cache /app/kv-cache-manager
-USER 65532:65532
 
-# Set the entrypoint to the kv-cache-manager binary
+USER 65532:65532
 ENTRYPOINT ["/app/kv-cache-manager"]

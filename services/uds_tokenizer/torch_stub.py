@@ -118,8 +118,8 @@ class _StubModule(types.ModuleType):
         return _Proxy()
 
 
-# Packages to stub: torch (no GPU), cv2/xgrammar/PIL (native-only, stripped)
-_STUB_PREFIXES = ("torch", "cv2", "xgrammar")
+# Packages to stub: torch/torchvision/torchaudio (no GPU), cv2/xgrammar (native-only, stripped)
+_STUB_PREFIXES = ("torch", "torchvision", "torchaudio", "cv2", "xgrammar")
 
 
 class _TorchFinder(importlib.abc.MetaPathFinder):

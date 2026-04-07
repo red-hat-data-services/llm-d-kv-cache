@@ -14,6 +14,7 @@ find "$SITE" -path '*/vllm/*.so' -delete
 # Native-only packages replaced by torch_stub.py import hook
 rm -rf "$SITE/opencv_python_headless.libs" "$SITE/cv2"
 rm -rf "$SITE/xgrammar"
+rm -rf "$SITE/torchvision" "$SITE/torchaudio"
 
 # Unused at runtime by the tokenizer service
 rm -rf "$SITE/pip" "$SITE/setuptools"

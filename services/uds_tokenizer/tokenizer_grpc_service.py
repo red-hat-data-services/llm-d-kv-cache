@@ -111,24 +111,25 @@ class TokenizationServiceServicer(tokenizer_pb2_grpc.TokenizationServiceServicer
     ) -> tokenizer_pb2.InitializeTokenizerResponse:
         logging.info(f"Initializing tokenizer for model: {request.model_name}")
 
+        # Load tokenizer first tokenization works without the renderer
+        tokenizer_success = await asyncio.to_thread(
+            self.tokenizer_service.load_tokenizer,
+            request.model_name,
+            request.enable_thinking,
+            request.add_generation_prompt,
+        )
+        if not tokenizer_success:
+            return tokenizer_pb2.InitializeTokenizerResponse(
+                success=False,
+                error_message=f"Failed to initialize tokenizer for model: {request.model_name}",
+            )
+
+        # Renderer is optional chat template rendering won't work without it
         renderer_success = await asyncio.to_thread(
             self.renderer_service.load_renderer, request.model_name
         )
         if not renderer_success:
-            return tokenizer_pb2.InitializeTokenizerResponse(
-                success=False,
-                error_message=f"Failed to initialize renderer for model: {request.model_name}",
-            )
-
-        try:
-            await asyncio.to_thread(
-                self.tokenizer_service.load_tokenizer,
-                request.model_name,
-                request.enable_thinking,
-                request.add_generation_prompt,
-            )
-        except Exception as e:
-            logging.warning("Tokenizer load failed (non-critical): %s", e)
+            logging.warning(f"Renderer not available for {request.model_name}, tokenization still works")
 
         return tokenizer_pb2.InitializeTokenizerResponse(success=True)
 

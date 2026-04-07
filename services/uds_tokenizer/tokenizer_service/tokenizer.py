@@ -19,7 +19,7 @@ import os
 from pathlib import Path
 from dataclasses import dataclass
 from typing import List, Dict, Union
-from transformers import AutoTokenizer, PreTrainedTokenizer, PreTrainedTokenizerFast
+from transformers import PreTrainedTokenizer, PreTrainedTokenizerFast
 from transformers.tokenization_utils_base import BatchEncoding
 from modelscope import snapshot_download
 from huggingface_hub import snapshot_download as hf_snapshot_download
@@ -66,12 +66,10 @@ class TokenizerService:
         # For local paths, use directly
         if not is_remote_model:
             logging.info(f"Loading tokenizer from {model_identifier}")
-            base_tokenizer = AutoTokenizer.from_pretrained(
+            base_tokenizer = PreTrainedTokenizerFast.from_pretrained(
                 model_identifier,
-                trust_remote_code=True,
                 padding_side="left",
                 truncation_side="left",
-                use_fast=True,
             )
             return base_tokenizer
 
@@ -92,12 +90,10 @@ class TokenizerService:
             os.path.exists(os.path.join(local_model_path, f)) for f in required_files
         ):
             logging.info(f"Using cached tokenizer from {local_model_path}")
-            base_tokenizer = AutoTokenizer.from_pretrained(
+            base_tokenizer = PreTrainedTokenizerFast.from_pretrained(
                 local_model_path,
-                trust_remote_code=True,
                 padding_side="left",
                 truncation_side="left",
-                use_fast=True,
             )
             return base_tokenizer
 
@@ -145,12 +141,10 @@ class TokenizerService:
 
         # Load the tokenizer from the downloaded files
         try:
-            base_tokenizer = AutoTokenizer.from_pretrained(
+            base_tokenizer = PreTrainedTokenizerFast.from_pretrained(
                 local_model_path,
-                trust_remote_code=True,
                 padding_side="left",
                 truncation_side="left",
-                use_fast=True,
             )
             return base_tokenizer
         except Exception as e:
@@ -195,12 +189,10 @@ class TokenizerService:
 
         # Load the tokenizer from the downloaded files
         try:
-            base_tokenizer = AutoTokenizer.from_pretrained(
+            base_tokenizer = PreTrainedTokenizerFast.from_pretrained(
                 local_model_path,
-                trust_remote_code=True,
                 padding_side="left",
                 truncation_side="left",
-                use_fast=True,
             )
             return base_tokenizer
         except Exception as e:

@@ -76,6 +76,16 @@ class TokenizerService:
         # Determine download source: ModelScope (if USE_MODELSCOPE=true) or Hugging Face (default)
         use_modelscope = os.getenv("USE_MODELSCOPE", "false").lower() == "true"
 
+        # vLLM sidecar shares /mnt/models with files at the root (no org/model subdirs)
+        flat_tokenizer = os.path.join(self.tokenizers_dir, "tokenizer.json")
+        if os.path.exists(flat_tokenizer):
+            logging.info(f"Using tokenizer from {self.tokenizers_dir}")
+            return PreTrainedTokenizerFast.from_pretrained(
+                self.tokenizers_dir,
+                padding_side="left",
+                truncation_side="left",
+            )
+
         # Convert model identifier to local path (e.g., qwen/Qwen2-7B -> tokenizers/qwen/Qwen2-7B)
         org_name, model_name = model_identifier.split("/", 1)
         local_model_path = os.path.join(self.tokenizers_dir, org_name, model_name)

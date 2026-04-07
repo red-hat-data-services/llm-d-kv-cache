@@ -7,7 +7,8 @@ PROD_VERSION ?= 0.0.0
 IMAGE_TAG_BASE ?= ghcr.io/llm-d/$(PROJECT_NAME)
 IMG = $(IMAGE_TAG_BASE):$(DEV_VERSION)
 NAMESPACE ?= hc4ai-operator
-VLLM_VERSION := 0.14.0
+VLLM_VERSION ?= 0.14.0
+TORCH_CPU_VERSION ?= 2.6.0
 
 TARGETOS ?= $(shell go env GOOS)
 TARGETARCH ?= $(shell go env GOARCH)
@@ -94,18 +95,19 @@ detect-python: ## Detects Python and prints the configuration.
 	fi
 	@printf "\033[33;1m==============================\033[0m\n"
 
+
 .PHONY: setup-venv
 setup-venv: detect-python ## Sets up the Python virtual environment.
 	@printf "\033[33;1m==== Setting up Python virtual environment in $(VENV_DIR) ====\033[0m\n"
 	@if [ ! -f "$(VENV_BIN)/python" ]; then \
-		echo "Creating virtual environment..."; \
-		$(PYTHON_EXE) -m venv $(VENV_DIR) || { \
-			echo "ERROR: Failed to create virtual environment."; \
-			echo "Your Python installation may be missing the 'venv' module."; \
-			echo "Try: 'sudo apt install python$(PYTHON_VERSION)-venv' or 'sudo dnf install python$(PYTHON_VERSION)-devel'"; \
-			exit 1; \
-		}; \
-	fi
+                echo "Creating virtual environment..."; \
+                $(PYTHON_EXE) -m venv $(VENV_DIR) || { \
+                        echo "ERROR: Failed to create virtual environment."; \
+                        echo "Your Python installation may be missing the 'venv' module."; \
+                        echo "Try: 'sudo apt install python$(PYTHON_VERSION)-venv' or 'sudo dnf install python$(PYTHON_VERSION)-devel'"; \
+                        exit 1; \
+                }; \
+        fi
 	@echo "Upgrading pip..."
 	@$(VENV_BIN)/pip install --upgrade pip
 	@echo "Python virtual environment setup complete."
@@ -114,37 +116,51 @@ setup-venv: detect-python ## Sets up the Python virtual environment.
 install-python-deps: setup-venv ## installs dependencies.
 	@printf "\033[33;1m==== Setting up Python virtual environment in $(VENV_DIR) ====\033[0m\n"
 	@if [ ! -f "$(VENV_BIN)/python" ]; then \
-		echo "ERROR: Virtual environment not found. Run 'make setup-venv' first."; \
-		exit 1; \
-	fi
+                echo "ERROR: Virtual environment not found. Run 'make setup-venv' first."; \
+                exit 1; \
+        fi
 	@if $(VENV_BIN)/python -c "import vllm" 2>/dev/null; then \
-		echo "vllm is already installed, skipping..."; \
-		exit 0; \
-	fi; \
-	echo "Installing vllm..."; \
-	if [ "$(TARGETOS)" = "linux" ]; then \
-		if [ "$(TARGETARCH)" = "amd64" ]; then \
-			echo "Installing vLLM pre-built wheel for x86_64..."; \
-			$(VENV_BIN)/pip install https://github.com/vllm-project/vllm/releases/download/v${VLLM_VERSION}/vllm-${VLLM_VERSION}+cpu-cp38-abi3-manylinux_2_35_x86_64.whl --extra-index-url https://download.pytorch.org/whl/cpu; \
-		elif [ "$(TARGETARCH)" = "arm64" ]; then \
-			echo "Installing vLLM pre-built wheel for aarch64..."; \
-			$(VENV_BIN)/pip install https://github.com/vllm-project/vllm/releases/download/v${VLLM_VERSION}/vllm-${VLLM_VERSION}+cpu-cp38-abi3-manylinux_2_35_aarch64.whl; \
-		else \
-			echo "Unsupported Linux architecture: $(TARGETARCH). Falling back to setup.sh..."; \
-			PATH=$(VENV_BIN):$$PATH ./pkg/preprocessing/chat_completions/setup.sh; \
-		fi; \
-	elif [ "$(TARGETOS)" = "darwin" ]; then \
-		echo "Building vLLM from source for macOS (pre-built wheels not available)..."; \
-		PATH=$(VENV_BIN):$$PATH ./pkg/preprocessing/chat_completions/setup.sh; \
-	else \
-		echo "Unsupported OS: $(TARGETOS)"; \
-		exit 1; \
-	fi; \
-	echo "Verifying vllm installation..."; \
-	$(VENV_BIN)/python -c "import vllm; print('✅ vllm version ' + vllm.__version__ + ' installed.')" || { \
-		echo "ERROR: vllm library not properly installed in venv."; \
-		exit 1; \
-	}
+                echo "vllm is already installed, skipping..."; \
+                exit 0; \
+        fi; \
+        echo "Installing vllm..."; \
+        if [ "$(TARGETOS)" = "linux" ]; then \
+                if [ "$(TARGETARCH)" = "amd64" ] || [ "$(TARGETARCH)" = "arm64" ]; then \
+                        if [ "$(TARGETARCH)" = "amd64" ]; then \
+                                WHEEL_URL="https://github.com/vllm-project/vllm/releases/download/v${VLLM_VERSION}/vllm-${VLLM_VERSION}+cpu-cp38-abi3-manylinux_2_35_x86_64.whl"; \
+                                EXTRA_INDEX="--extra-index-url https://download.pytorch.org/whl/cpu"; \
+                        else \
+                                WHEEL_URL="https://github.com/vllm-project/vllm/releases/download/v${VLLM_VERSION}/vllm-${VLLM_VERSION}+cpu-cp38-abi3-manylinux_2_35_aarch64.whl"; \
+                                EXTRA_INDEX=""; \
+                        fi; \
+                        echo "Attempting pre-built wheel install from $$WHEEL_URL..."; \
+                        if $(VENV_BIN)/pip install "$$WHEEL_URL" $$EXTRA_INDEX; then \
+                                echo "Pre-built wheel installed successfully."; \
+                        else \
+                                echo "Pre-built wheel rejected (likely glibc < 2.35). Falling back to PyPI source install..."; \
+                                $(VENV_BIN)/pip install \
+                                        "torch==${TORCH_CPU_VERSION}+cpu" \
+                                        --index-url https://download.pytorch.org/whl/cpu && \
+                                $(VENV_BIN)/pip install \
+                                        "vllm==${VLLM_VERSION}" \
+                                        --extra-index-url https://download.pytorch.org/whl/cpu; \
+                        fi; \
+                else \
+                        echo "Unsupported Linux architecture: $(TARGETARCH). Falling back to setup.sh..."; \
+                        PATH=$(VENV_BIN):$$PATH ./pkg/preprocessing/chat_completions/setup.sh; \
+                fi; \
+        elif [ "$(TARGETOS)" = "darwin" ]; then \
+                echo "Building vLLM from source for macOS (pre-built wheels not available)..."; \
+                PATH=$(VENV_BIN):$$PATH ./pkg/preprocessing/chat_completions/setup.sh; \
+        else \
+                echo "Unsupported OS: $(TARGETOS)"; \
+                exit 1; \
+        fi; \
+        echo "Verifying vllm installation..."; \
+        $(VENV_BIN)/python -c "import vllm; print('vllm version ' + vllm.__version__ + ' installed.')" || { \
+                echo "ERROR: vllm library not properly installed in venv."; \
+                exit 1; \
+        }
 
 .PHONY: install-hf-cli
 install-hf-cli:

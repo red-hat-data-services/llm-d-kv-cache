@@ -12,7 +12,7 @@ WORKDIR /workspace
 RUN dnf install -y \
     python3.12 python3.12-devel python3.12-pip \
     gcc gcc-c++ gfortran make cmake git  \
-    openblas openblas-devel numactl-devel \
+    openblas openblas-devel numactl \
     zlib-devel libjpeg-devel \
     clang llvm-devel \
     openssl-devel \
@@ -150,8 +150,10 @@ RUN dnf install -y 'https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.
     dnf clean all 
 
 # Fix ld version mismatch
-RUN ln -sf /usr/bin/ld \
-    /opt/rh/gcc-toolset-14/root/usr/libexec/gcc/s390x-redhat-linux/14/ld
+RUN if [ "$TARGETARCH" = "s390x" ]; then \
+        ln -sf /usr/bin/ld \
+        /opt/rh/gcc-toolset-14/root/usr/libexec/gcc/s390x-redhat-linux/14/ld; \
+    fi
 
 # Fix openblas symlink
 RUN ln -sf /usr/lib64/libopenblas.so.0 /usr/lib64/libopenblas.so || true

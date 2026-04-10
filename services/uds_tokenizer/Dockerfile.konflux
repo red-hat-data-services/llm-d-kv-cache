@@ -32,7 +32,11 @@ USER root
 
 # use requirements.txt for konflux
 COPY requirements.txt /app/requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+# --no-deps: all transitive deps are already pinned in requirements.txt.
+# This also prevents pip from pulling intel-cmplr-lib-ur (a transitive dep
+# of intel-openmp that's excluded because it fails hermetic prefetch and
+# is not needed for CPU-only torch).
+RUN pip install --no-cache-dir --no-deps -r requirements.txt
 
 # --- Runtime bases per architecture ---
 FROM registry.access.redhat.com/ubi9/python-312:9.7 AS runtime-amd64

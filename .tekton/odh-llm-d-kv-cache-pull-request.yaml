@@ -48,7 +48,7 @@ spec:
   - name: path-context
     value: services/uds_tokenizer
   - name: prefetch-input
-    value: '[{"type": "pip", "path": "services/uds_tokenizer", "requirements_files": ["requirements.txt"], "binary": {"arch": "x86_64,aarch64,ppc64le,s390x", "os": "linux"}}]'
+    value: '[{"type": "pip", "path": "services/uds_tokenizer", "requirements_files": ["requirements.txt"], "binary": {"arch": "x86_64,aarch64,ppc64le,s390x", "os": "linux"}}, {"type": "rpm", "path": "services/uds_tokenizer"}]'
   - name: image-expires-after
     value: 5d
   - name: enable-slack-failure-notification

@@ -1,0 +1,21 @@
+# RPM lockfile input for UBI9 (multi-arch)
+#
+# Lists RPMs installed via dnf in the Dockerfile that need to be
+# prefetched for hermetic Konflux builds.
+#
+# Regenerate the lock file with:
+#   rpm-lockfile-prototype -f Dockerfile.konflux --outfile rpms.lock.yaml rpms.in.yaml
+arches:
+  - x86_64
+  - aarch64
+  - ppc64le
+  - s390x
+
+contentOrigin:
+  repofiles:
+    - ubi.repo
+
+packages:
+  - openblas-threads
+
+installWeakDeps: false

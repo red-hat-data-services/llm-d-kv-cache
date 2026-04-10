@@ -15,11 +15,13 @@
 # --- Builder bases per architecture ---
 # x86_64/arm64: UBI 9 Python 3.12
 # ppc64le/s390x: vllm-spyre (ships vllm + torch + deps pre-installed)
+# --platform is required: buildah pulls ALL FROM images even for unused stages.
+# Without it, the arm64 builder fails because vllm-spyre has no arm64 variant.
 ARG TARGETARCH
-FROM registry.access.redhat.com/ubi9/python-312:9.7 AS builder-amd64
-FROM registry.access.redhat.com/ubi9/python-312:9.7 AS builder-arm64
-FROM registry.redhat.io/rhaii-early-access/vllm-spyre-rhel9:3.4.0-ea.2 AS builder-ppc64le
-FROM registry.redhat.io/rhaii-early-access/vllm-spyre-rhel9:3.4.0-ea.2 AS builder-s390x
+FROM --platform=linux/amd64 registry.access.redhat.com/ubi9/python-312:9.7 AS builder-amd64
+FROM --platform=linux/arm64 registry.access.redhat.com/ubi9/python-312:9.7 AS builder-arm64
+FROM --platform=linux/ppc64le registry.redhat.io/rhaii-early-access/vllm-spyre-rhel9:3.4.0-ea.2 AS builder-ppc64le
+FROM --platform=linux/s390x registry.redhat.io/rhaii-early-access/vllm-spyre-rhel9:3.4.0-ea.2 AS builder-s390x
 
 # Build stage
 FROM builder-${TARGETARCH} AS builder
@@ -39,10 +41,10 @@ COPY requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir --no-deps -r requirements.txt
 
 # --- Runtime bases per architecture ---
-FROM registry.access.redhat.com/ubi9/python-312:9.7 AS runtime-amd64
-FROM registry.access.redhat.com/ubi9/python-312:9.7 AS runtime-arm64
-FROM registry.redhat.io/rhaii-early-access/vllm-spyre-rhel9:3.4.0-ea.2 AS runtime-ppc64le
-FROM registry.redhat.io/rhaii-early-access/vllm-spyre-rhel9:3.4.0-ea.2 AS runtime-s390x
+FROM --platform=linux/amd64 registry.access.redhat.com/ubi9/python-312:9.7 AS runtime-amd64
+FROM --platform=linux/arm64 registry.access.redhat.com/ubi9/python-312:9.7 AS runtime-arm64
+FROM --platform=linux/ppc64le registry.redhat.io/rhaii-early-access/vllm-spyre-rhel9:3.4.0-ea.2 AS runtime-ppc64le
+FROM --platform=linux/s390x registry.redhat.io/rhaii-early-access/vllm-spyre-rhel9:3.4.0-ea.2 AS runtime-s390x
 
 # Runtime stage
 FROM runtime-${TARGETARCH} AS runtime

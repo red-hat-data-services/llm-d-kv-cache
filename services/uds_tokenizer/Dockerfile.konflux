@@ -15,13 +15,15 @@
 # --- Builder bases per architecture ---
 # x86_64/arm64: UBI 9 Python 3.12
 # ppc64le/s390x: vllm-spyre (ships vllm + torch + deps pre-installed)
-# Image refs use ARGs so the Konflux pre-pull step (which extracts FROM
-# image names) cannot resolve them — it skips the pre-pull and lets
-# buildah pull the correct image at build time. Without ARGs, the arm64
-# builder would try to pull vllm-spyre (which has no arm64 variant) and fail.
+#
+# SPYRE_IMAGE has NO default so the Konflux pre-pull step cannot resolve
+# FROM ${SPYRE_IMAGE} and skips it.  The actual value is passed via
+# --build-arg in the PipelineRun.  On arm64 the builder-ppc64le/s390x
+# stages are unreachable so buildah (--skip-unused-stages, default true)
+# never pulls the image.
 ARG TARGETARCH
 ARG UBI9_IMAGE=registry.access.redhat.com/ubi9/python-312:9.7
-ARG SPYRE_IMAGE=registry.redhat.io/rhaii-early-access/vllm-spyre-rhel9:3.4.0-ea.2
+ARG SPYRE_IMAGE
 FROM ${UBI9_IMAGE} AS builder-amd64
 FROM ${UBI9_IMAGE} AS builder-arm64
 FROM ${SPYRE_IMAGE} AS builder-ppc64le
@@ -37,10 +39,13 @@ WORKDIR /app
 USER root
 
 # numpy links against system openblas on UBI9 (rhoai wheels don't bundle it).
-# In hermetic builds, RPMs are prefetched via rpms.lock.yaml and the repo
-# config is injected by cachi2/hermeto into /etc/yum.repos.d/.
-RUN dnf install -y openblas-threads && \
-    dnf clean all && rm -rf /var/cache/dnf
+# Only needed on x86_64/aarch64 (UBI9 base); vllm-spyre (ppc64le/s390x)
+# already ships openblas.
+ARG TARGETARCH
+RUN if [ "$TARGETARCH" = "amd64" ] || [ "$TARGETARCH" = "arm64" ]; then \
+        dnf install -y openblas-threads && \
+        dnf clean all && rm -rf /var/cache/dnf; \
+    fi
 
 # use requirements.txt for konflux
 COPY requirements.txt /app/requirements.txt
@@ -73,9 +78,13 @@ COPY --from=builder /opt/app-root/bin/ /opt/app-root/bin/
 # Need root for chown operations
 USER root
 
-# Install openblas-threads in runtime (numpy needs libopenblasp.so.0)
-RUN dnf install -y openblas-threads && \
-    dnf clean all && rm -rf /var/cache/dnf
+# Install openblas-threads in runtime (numpy needs libopenblasp.so.0).
+# Only on x86_64/aarch64; vllm-spyre (ppc64le/s390x) already ships openblas.
+ARG TARGETARCH
+RUN if [ "$TARGETARCH" = "amd64" ] || [ "$TARGETARCH" = "arm64" ]; then \
+        dnf install -y openblas-threads && \
+        dnf clean all && rm -rf /var/cache/dnf; \
+    fi
 
 # Copy project files into the image
 
@@ -109,7 +118,7 @@ USER 65532:65532
 EXPOSE ${HEALTH_PORT}
 
 # Startup command: run direct gRPC server
-CMD ["python", "/app/run_grpc_server.py"]
+ENTRYPOINT ["python", "/app/run_grpc_server.py"]
 
 # Test stage - validates critical imports without affecting final image size
 FROM runtime as test

@@ -23,7 +23,7 @@ dependencies = [
     "grpcio-reflection>=1.78.0",
     ################################ TEMPORARY WORKAROUND FOR STAGING INDEXES ################################
     # We don't need to specify this anymore as it should have cleared the official index. Keeping around in case of build failures for debugging purposes
-    # "intel-cmplr-lib-ur @ https://packages.redhat.com/api/pulp-content/public-rhai/rhoai/3.4/cpu-ubi9/intel_cmplr_lib_ur-2024.2.1-py2.py3-none-manylinux1_x86_64.whl ; platform_system == 'Linux' and platform_machine == 'x86_64'",
+    "intel-cmplr-lib-ur @ https://packages.redhat.com/api/pulp-content/public-rhai/rhoai/3.4/cpu-ubi9/intel_cmplr_lib_ur-2024.2.1-py2.py3-none-manylinux1_x86_64.whl ; platform_system == 'Linux' and platform_machine == 'x86_64'",
     ##########################################################################################################
 ]
 

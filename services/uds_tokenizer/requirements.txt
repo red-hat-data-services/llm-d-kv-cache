@@ -376,6 +376,9 @@ importlib-metadata==8.7.1 ; (platform_machine == 'aarch64' and sys_platform == '
     --hash=sha256:49fef1ae6440c182052f407c8d34a68f72efc36db9ca90dc0113398f2fdde8bb \
     --hash=sha256:5a1f80bf1daa489495071efbb095d75a634cf28a8bc299581244063b53176151
     # via opentelemetry-api
+intel-cmplr-lib-ur @ https://packages.redhat.com/api/pulp-content/public-rhai/rhoai/3.4/cpu-ubi9/intel_cmplr_lib_ur-2024.2.1-py2.py3-none-manylinux1_x86_64.whl ; platform_machine == 'x86_64' and sys_platform == 'linux' \
+    --hash=sha256:8b78d58ab501d6e5a582967be80fdbf7b03b33279135a303da36dbf11f481ed7
+    # via uds-tokenizer
 intel-openmp==2024.2.1 ; platform_machine == 'x86_64' and sys_platform == 'linux' \
     --hash=sha256:21892ea07a9c6e164707d2b44e6f396f9f2ab6cc7e108755011fad59b596182a
     # via vllm

@@ -2,17 +2,25 @@
 name = "uds-tokenizer"
 version = "0.1.0"
 description = "UDS Tokenizer Service - gRPC tokenization over Unix Domain Socket"
-requires-python = ">=3.12"
+requires-python = "==3.12.*"
 dependencies = [
-    # vLLM 0.18.0 CPU wheels — Linux-only, arch-conditional via PEP 508 markers
-    "vllm @ https://wheels.vllm.ai/bcf2be96120005e9aea171927f85055a6a5c0cf6/vllm-0.18.0%2Bcpu-cp38-abi3-manylinux_2_35_x86_64.whl ; platform_system == 'Linux' and platform_machine == 'x86_64'",
-    "vllm @ https://wheels.vllm.ai/bcf2be96120005e9aea171927f85055a6a5c0cf6/vllm-0.18.0%2Bcpu-cp38-abi3-manylinux_2_35_aarch64.whl ; platform_system == 'Linux' and platform_machine == 'aarch64'",
+    # vLLM CPU wheels from rhoai-wheels — Linux-only, arch-conditional via PEP 508 markers
+    # NOTE - 0.18.0 wheels do not exist yet. See:
+    # "vllm @ https://packages.redhat.com/api/pulp-content/public-rhai/rhoai/3.4/cpu-ubi9/vllm-0.18.0+rhaiv.0-0-cp312-cp312-linux_x86_64.whl ; platform_system == 'Linux' and platform_machine == 'x86_64'",
+    # "vllm @ https://packages.redhat.com/api/pulp-content/public-rhai/rhoai/3.4/cpu-ubi9/vllm-0.18.0+rhaiv.0-0-cp312-cp312-linux_aarch64.whl ; platform_system == 'Linux' and platform_machine == 'aarch64'",
+    "vllm==0.16.0+rhaiv.3 ; platform_system == 'Linux' and platform_machine == 'x86_64'",
+    "vllm==0.16.0+rhaiv.3 ; platform_system == 'Linux' and platform_machine == 'aarch64'",
+    # Pin torch ecosystem to internal rhoai-wheels versions (CPU-only).
+    # These are also transitive deps of vllm, but pinning them here as direct
+    # deps lets us route them to the rhoai index via [tool.uv.sources].
+    "torch==2.10.0 ; platform_system == 'Linux' and (platform_machine == 'x86_64' or platform_machine == 'aarch64')",
+    "torchaudio==2.10.0 ; platform_system == 'Linux' and (platform_machine == 'x86_64' or platform_machine == 'aarch64')",
+    "torchvision==0.25.0 ; platform_system == 'Linux' and (platform_machine == 'x86_64' or platform_machine == 'aarch64')",
     "pydantic>=2.12.0",
     "shortuuid>=1.0.13",
     "transformers>=4.57.0,<5",
     "safetensors>=0.7.0",
     "Jinja2>=3.1.6",
-    "modelscope>=1.35.0",
     "huggingface-hub>=0.36.0",
     "aiohttp>=3.13.0",
     "protobuf>=6.31.1",
@@ -29,6 +37,58 @@ test = [
     "pytest-timeout>=2.1.0",
     "requests>=2.25.0",
 ]
+
+[tool.uv]
+environments = [
+    "sys_platform == 'linux' and platform_machine == 'x86_64'",
+    "sys_platform == 'linux' and platform_machine == 'aarch64'",
+    "sys_platform == 'linux' and platform_machine == 'ppc64le'",
+    "sys_platform == 'linux' and platform_machine == 's390x'",
+]
+
+# intel-cmplr-lib-ur provides Intel Unified Runtime adapters (Level Zero, OpenCL)
+# for Intel GPU offloading — not needed for CPU-only torch.
+# It's a transitive dep of intel-openmp and fails cachi2 hermetic prefetch.
+# Override it out; intel-openmp (libiomp5.so) is still installed.
+# NOTE: uv export ignores this override, so after running `uv export` you must
+# manually remove intel-cmplr-lib-ur from requirements.txt:
+#   sed -i '/^intel-cmplr-lib-ur/d' requirements.txt
+# Overrides to pin transitive deps to versions available on the rhoai index.
+# hermeto doesn't support --extra-index-url, so ALL production packages must
+# be downloadable from the single rhoai index. These overrides constrain
+# versions that uv would otherwise resolve from PyPI at newer versions.
+# To check available versions: curl -s "https://packages.redhat.com/api/pypi/public-rhai/rhoai/3.4/cpu-ubi9/simple/<pkg>/?format=json"
+override-dependencies = [
+    "intel-cmplr-lib-ur ; python_version == '0'",
+    "anthropic<=0.89.0",
+    "cryptography<=46.0.6",
+    "fastapi-cloud-cli<=0.15.1",
+    "fastar<=0.9.0",
+    "msgspec<=0.20.0",
+    "ninja<=1.11.1.4",
+    "openai<=2.30.0",
+    "prometheus-client<=0.24.1",
+]
+
+# Internal rhoai-wheels PEP 503 index — default package source.
+# Uses first-match strategy: packages found here are never checked on PyPI.
+# PyPI is a fallback for packages not mirrored (e.g. pytest-timeout).
+[[tool.uv.index]]
+name = "rhoai"
+url = "https://packages.redhat.com/api/pypi/public-rhai/rhoai/3.4/cpu-ubi9/simple/"
+default = true
+
+[[tool.uv.index]]
+name = "pypi"
+url = "https://pypi.org/simple/"
+
+# Route packages that must come from the internal index.
+# This prevents uv from picking PyPI's CUDA-enabled torch wheels.
+[tool.uv.sources]
+vllm = { index = "rhoai" }
+torch = { index = "rhoai" }
+torchaudio = { index = "rhoai" }
+torchvision = { index = "rhoai" }
 
 [tool.ruff]
 exclude = ["tokenizerpb/*_pb2.py", "tokenizerpb/*_pb2_grpc.py"]

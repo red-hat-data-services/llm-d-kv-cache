@@ -55,8 +55,6 @@ RUN mkdir -p /tmp/tokenizer && chown 65532:65532 /tmp/tokenizer
 # Create tokenizer cache directories and set permissions
 ENV TOKENIZERS_DIR=/app/tokenizers
 RUN mkdir -p /app/tokenizers && chown -R 65532:65532 /app/tokenizers
-# Create and set permissions for ModelScope directory
-RUN mkdir -p /.modelscope && chown -R 65532:65532 /.modelscope
 # Create and set permissions for Hugging Face cache directory
 RUN mkdir -p /.cache && chown -R 65532:65532 /.cache
 

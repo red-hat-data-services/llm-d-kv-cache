@@ -21,7 +21,6 @@ from dataclasses import dataclass
 from typing import List, Dict, Union
 from transformers import AutoTokenizer, PreTrainedTokenizer, PreTrainedTokenizerFast
 from transformers.tokenization_utils_base import BatchEncoding
-from modelscope import snapshot_download
 from huggingface_hub import snapshot_download as hf_snapshot_download
 from .exceptions import TokenizerError, ModelDownloadError, TokenizationError
 
@@ -58,7 +57,7 @@ class TokenizerService:
             self.configs[config.model] = config
 
     def _create_tokenizer(self, model_identifier: str) -> AnyTokenizer:
-        """Create a tokenizer, using cached files if available or downloading from ModelScope or Hugging Face"""
+        """Create a tokenizer, using cached files if available or downloading from Hugging Face"""
         # Check if the model_identifier is a remote model name or a local path
         # More robust check similar to what vLLM does
         is_remote_model = self._is_remote_model(model_identifier)
@@ -74,9 +73,6 @@ class TokenizerService:
                 use_fast=True,
             )
             return base_tokenizer
-
-        # Determine download source: ModelScope (if USE_MODELSCOPE=true) or Hugging Face (default)
-        use_modelscope = os.getenv("USE_MODELSCOPE", "false").lower() == "true"
 
         # Convert model identifier to local path (e.g., qwen/Qwen2-7B -> tokenizers/qwen/Qwen2-7B)
         org_name, model_name = model_identifier.split("/", 1)
@@ -101,61 +97,8 @@ class TokenizerService:
             )
             return base_tokenizer
 
-        # Download the tokenizer files from ModelScope or Hugging Face
-        if use_modelscope:
-            return self._download_from_modelscope(model_identifier, local_model_path)
-        else:
-            return self._download_from_huggingface(model_identifier, local_model_path)
-
-    def _download_from_modelscope(
-        self, model_identifier: str, local_model_path: str
-    ) -> AnyTokenizer:
-        """Download tokenizer files from ModelScope"""
-        logging.info(f"Downloading tokenizer for {model_identifier} from ModelScope")
-        try:
-            # Ensure the local model directory exists
-            os.makedirs(local_model_path, exist_ok=True)
-
-            # Download only the tokenizer related files from ModelScope
-            snapshot_download(
-                model_identifier,
-                local_dir=local_model_path,
-                allow_patterns=[
-                    "tokenizer.json",
-                    "tokenizer_config.json",
-                    "special_tokens_map.json",
-                    "vocab.json",
-                    "merges.txt",
-                    "config.json",
-                    "generation_config.json",
-                ],
-            )
-            logging.info(f"Successfully downloaded tokenizer to {local_model_path}")
-        except Exception as e:
-            # Clean up potentially incomplete download directory
-            if os.path.exists(local_model_path) and not os.listdir(local_model_path):
-                os.rmdir(local_model_path)
-                logging.info(f"Removed empty directory {local_model_path}")
-            logging.error(
-                f"Failed to download tokenizer for {model_identifier} from ModelScope: {e}"
-            )
-            raise ModelDownloadError(
-                f"Failed to download model from ModelScope: {e}"
-            ) from e
-
-        # Load the tokenizer from the downloaded files
-        try:
-            base_tokenizer = AutoTokenizer.from_pretrained(
-                local_model_path,
-                trust_remote_code=True,
-                padding_side="left",
-                truncation_side="left",
-                use_fast=True,
-            )
-            return base_tokenizer
-        except Exception as e:
-            logging.error(f"Failed to load tokenizer from {local_model_path}: {e}")
-            raise TokenizerError(f"Failed to load tokenizer: {e}") from e
+        # Download the tokenizer files from Hugging Face
+        return self._download_from_huggingface(model_identifier, local_model_path)
 
     def _download_from_huggingface(
         self, model_identifier: str, local_model_path: str

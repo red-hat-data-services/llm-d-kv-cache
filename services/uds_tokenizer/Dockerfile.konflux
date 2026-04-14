@@ -13,7 +13,7 @@
 # limitations under the License.
 
 # Build stage
-FROM --platform=$TARGETPLATFORM registry.redhat.io/ubi10/python-312-minimal:10.1 as builder
+FROM --platform=$TARGETPLATFORM registry.access.redhat.com/ubi9/python-312:9.7 AS builder
 
 # Set build arguments
 ARG TARGETPLATFORM
@@ -29,7 +29,7 @@ COPY requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Runtime stage
-FROM --platform=$TARGETPLATFORM registry.redhat.io/ubi10/python-312-minimal:10.1 as runtime
+FROM --platform=$TARGETPLATFORM registry.access.redhat.com/ubi9/python-312:9.7 AS runtime
 
 # Set build arguments
 ARG HEALTH_PORT=8082
@@ -81,7 +81,7 @@ EXPOSE ${HEALTH_PORT}
 CMD ["python", "/app/run_grpc_server.py"]
 
 # Test stage - validates critical imports without affecting final image size
-FROM runtime as test
+FROM runtime AS test
 RUN python -c "\
 from tokenizer_service.renderer import RendererService; \
 from tokenizer_service.tokenizer import TokenizerService; \

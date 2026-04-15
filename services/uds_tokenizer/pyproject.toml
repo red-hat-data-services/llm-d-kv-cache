@@ -29,6 +29,10 @@ dependencies = [
     # of bundling a non-validated copy that causes FATAL FIPS SELFTEST FAILURE.
     "cryptography @ https://packages.redhat.com/api/pulp-content/public-rhai/rhoai/3.4/cpu-ubi9/cryptography-46.0.7-2-cp312-abi3-linux_x86_64.whl ; platform_system == 'Linux' and platform_machine == 'x86_64'",
     "cryptography @ https://packages.redhat.com/api/pulp-content/public-rhai/rhoai/3.4/cpu-ubi9/cryptography-46.0.7-2-cp312-abi3-linux_aarch64.whl ; platform_system == 'Linux' and platform_machine == 'aarch64'",
+    # Red Hat AIPCC built opencv-python-headless for FIPS as well
+    # system OpenSSL/FIPS-validated libraries rather than bundled upstream copies.
+    "opencv-python-headless @ https://packages.redhat.com/api/pulp-content/public-rhai/rhoai/3.4/cpu-ubi9/opencv_python_headless-4.13.0.92-4-cp312-cp312-linux_x86_64.whl ; platform_system == 'Linux' and platform_machine == 'x86_64'",
+    "opencv-python-headless @ https://packages.redhat.com/api/pulp-content/public-rhai/rhoai/3.4/cpu-ubi9/opencv_python_headless-4.13.0.92-4-cp312-cp312-linux_aarch64.whl ; platform_system == 'Linux' and platform_machine == 'aarch64'",
 ]
 
 [project.optional-dependencies]

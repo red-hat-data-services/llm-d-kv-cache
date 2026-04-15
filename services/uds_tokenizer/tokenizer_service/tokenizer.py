@@ -21,9 +21,14 @@ from dataclasses import dataclass
 from typing import List, Dict, Union
 from transformers import AutoTokenizer, PreTrainedTokenizer, PreTrainedTokenizerFast
 from transformers.tokenization_utils_base import BatchEncoding
-from modelscope import snapshot_download
 from huggingface_hub import snapshot_download as hf_snapshot_download
 from .exceptions import TokenizerError, ModelDownloadError, TokenizationError
+
+# Optional: modelscope is not in the AIPCC index; gated by USE_MODELSCOPE.
+try:
+    from modelscope import snapshot_download
+except ImportError:
+    snapshot_download = None
 
 AnyTokenizer = Union[PreTrainedTokenizer, PreTrainedTokenizerFast]
 
@@ -111,6 +116,10 @@ class TokenizerService:
         self, model_identifier: str, local_model_path: str
     ) -> AnyTokenizer:
         """Download tokenizer files from ModelScope"""
+        if snapshot_download is None:
+            raise ModelDownloadError(
+                "USE_MODELSCOPE=true but modelscope is not installed"
+            )
         logging.info(f"Downloading tokenizer for {model_identifier} from ModelScope")
         try:
             # Ensure the local model directory exists

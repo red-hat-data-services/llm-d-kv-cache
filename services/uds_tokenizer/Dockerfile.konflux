@@ -13,7 +13,8 @@
 # limitations under the License.
 
 # Build stage
-FROM --platform=$TARGETPLATFORM registry.access.redhat.com/ubi9/python-312:9.7 AS builder
+# TODO: bump to 3.4 once registry.redhat.io/rhai/base-image-cpu-rhel9:3.4 is published
+FROM --platform=$TARGETPLATFORM registry.redhat.io/rhai/base-image-cpu-rhel9:3.3 AS builder
 
 # Set build arguments
 ARG TARGETPLATFORM

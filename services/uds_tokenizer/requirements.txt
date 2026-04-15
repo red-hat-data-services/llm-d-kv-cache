@@ -68,13 +68,10 @@ attrs==26.1.0 \
     #   referencing
 blake3==1.0.8 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
     --hash=sha256:269f255b110840e52b6ce9db02217e39660ebad3e34ddd5bca8b8d378a77e4e1 \
-    --hash=sha256:38209b10482c97e151681ea3e91cc7141f56adbbf4820a7d701a923124b41e6a \
     --hash=sha256:504d1399b7fb91dfe5c25722d2807990493185faa1917456455480c36867adb5 \
     --hash=sha256:513cc7f0f5a7c035812604c2c852a0c1468311345573de647e310aca4ab165ba \
-    --hash=sha256:66ca28a673025c40db3eba21a9cac52f559f83637efa675b3f6bd8683f0415f3 \
     --hash=sha256:a25db3d36b55f5ed6a86470155cc749fc9c5b91c949b8d14f48658f9d960d9ec \
-    --hash=sha256:c84af132aa09abeadf9a0118c8fb26f4528f3f42c10ef8be0fcf31c478774ec4 \
-    --hash=sha256:e5b5da177d62cc4b7edf0cea08fe4dec960c9ac27f916131efa890a01f747b93
+    --hash=sha256:c84af132aa09abeadf9a0118c8fb26f4528f3f42c10ef8be0fcf31c478774ec4
     # via vllm
 cachetools==7.0.5 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
     --hash=sha256:0cd042c24377200c1dcd225f8b7b12b0ca53cc2c961b43757e774ebe190fd990 \
@@ -97,12 +94,10 @@ certifi==2026.2.25 \
     #   requests
     #   sentry-sdk
 cffi==2.0.0 ; (implementation_name == 'pypy' and platform_machine == 'aarch64' and sys_platform == 'linux') or (implementation_name == 'pypy' and platform_machine == 'x86_64' and sys_platform == 'linux') or (platform_machine == 'aarch64' and platform_python_implementation != 'PyPy' and sys_platform == 'linux') or (platform_machine == 'x86_64' and platform_python_implementation != 'PyPy' and sys_platform == 'linux') \
-    --hash=sha256:1e3a615586f05fc4065a8b22b8152f0c1b00cdbc60596d187c2a74f9e3036e4e \
     --hash=sha256:2c8f814d84194c9ea681642fd164267891702542f028a15fc97d4674b6206187 \
     --hash=sha256:3925dd22fa2b7699ed2617149842d2e6adde22b262fcbfada50e3d195e4b3a94 \
     --hash=sha256:3e17ed538242334bf70832644a32a7aae3d83b57567f9fd60a26257e992b79ba \
     --hash=sha256:44d1b5909021139fe36001ae048dbdde8214afa20200eda0f64c068cac5d5529 \
-    --hash=sha256:81afed14892743bbe14dacb9e36d9e0e504cd204e0b165062c488942b9718037 \
     --hash=sha256:b21e08af67b8a103c71a250401c78d5e0893beff75e28c53c98f4de42f774062
     # via
     #   cryptography
@@ -213,13 +208,8 @@ fastapi-cloud-cli==0.16.1 ; (platform_machine == 'aarch64' and sys_platform == '
     --hash=sha256:8b43bd8c7dd3710393d3be4c248c6a00807202b488a543716562529a8316cbee
     # via fastapi-cli
 fastar==0.10.0 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
-    --hash=sha256:2637a20a69ea34455aa53cca8340273166bba8bd5c06727ea64ec151ba56abe0 \
-    --hash=sha256:4110f5a357ea88fa35f27021cf30c26d863a5b589d6ac9e4e854ed02b34c9f35 \
-    --hash=sha256:50a4a5fcd001f289fe66cbcff0aaf9e081532253cd7427270734988b22db6136 \
-    --hash=sha256:54f60b5a87a2884efa8fc51978989e58cb1dc0ec1f645629491cd12f1dd5bb77 \
     --hash=sha256:68d70adc24b9f4cf4520ed60dbd9fb60a6eb22bb96fd6756bcb387616cb2a979 \
     --hash=sha256:a453abf99af0f42bb03db90f9bd4aa69b5a7b88d50841577d428ec51f206856f \
-    --hash=sha256:c6a3e7acc58377de02ff3e8937d4b7e09b1270c294a0d5a0d3c2614aee69058e \
     --hash=sha256:cba4452d6a33894faf5b0b9d55342a1259ad5c94cbdb16af09346084e0787680 \
     --hash=sha256:edaa085c8555620ec24aac1663251d62bdece619fcf6a4ad9dc2389a5fa13220 \
     --hash=sha256:efa48b89ca2c8496f7fa0d36162e12d7476c597d0bae4d8fc42f86b958bd8fea
@@ -395,10 +385,7 @@ jinja2==3.1.6 \
     #   torch
     #   uds-tokenizer
 jiter==0.13.0 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
-    --hash=sha256:04670992b576fa65bd056dbac0c39fe8bd67681c380cb2b48efa885711d9d726 \
     --hash=sha256:1f4748aad1b4a93c8bdd70f604d0f748cdc0e8744c5547798acfa52f10e79228 \
-    --hash=sha256:3b3fb8c2053acaef8580809ac1d1f7481a0a0bdc012fd7f5d8b18fb696a5a089 \
-    --hash=sha256:5a1aff1fbdb803a376d4d22a8f63f8e7ccbce0b4890c26cc7af9e501ab339ef0 \
     --hash=sha256:7bb00b6d26db67a05fe3e12c76edc75f32077fb51deed13822dc648fa373bc19 \
     --hash=sha256:ab44b178f7981fcaea7e0a5df20e773c663d06ffda0198f1a524e91b2fde7e59 \
     --hash=sha256:bdaba7d87e66f26a2c45d8cbadcbfc4bf7884182317907baf39cfe9775bb4d93 \
@@ -521,16 +508,10 @@ networkx==3.6.1 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or
     --hash=sha256:d47fbf302e7d9cbbb9e2555a0d267983d2aa476bac30e90dfbe5669bd57f3762
     # via torch
 ninja==1.11.1.4 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
-    --hash=sha256:055f386fb550c2c9d6157e45e20a84d29c47968876b9c5794ae2aec46f952306 \
     --hash=sha256:096487995473320de7f65d622c3f1d16c3ad174797602218ca8c967f51ec38a0 \
     --hash=sha256:6aa39f6e894e0452e5b297327db00019383ae55d5d9c57c73b04f13bf79d438a \
-    --hash=sha256:9c29bb66d2aa46a2409ab369ea804c730faec7652e8c22c1e428cc09216543e5 \
-    --hash=sha256:c3b96bd875f3ef1db782470e9e41d7508905a0986571f219d20ffed238befa15 \
     --hash=sha256:cf554e73f72c04deb04d0cf51f5fdb1903d9c9ca3d2344249c8ce3bd616ebc02 \
-    --hash=sha256:cfdd09776436a1ff3c4a2558d3fc50a689fb9d7f1bdbc3e6f7b8c2991341ddb3 \
     --hash=sha256:d3090d4488fadf6047d0d7a1db0c9643a8d391f0d94729554dbb89b5bdc769d7 \
-    --hash=sha256:d4a6f159b08b0ac4aca5ee1572e3e402f969139e71d85d37c0e2872129098749 \
-    --hash=sha256:ecce44a00325a93631792974659cf253a815cc6da4ec96f89742925dfc295a0d \
     --hash=sha256:f6186d7607bb090c3be1e10c8a56b690be238f953616626f5032238c66e56867
     # via vllm
 numba==0.61.2 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
@@ -619,12 +600,9 @@ openai==2.24.0 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or 
     # via vllm
 openai-harmony==0.0.8 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
     --hash=sha256:007b0476a1f331f8130783f901f1da6f5a7057af1a4891f1b6a31dec364189b5 \
-    --hash=sha256:5cfcfd963b50a41fc656c84d3440ca6eecdccd6c552158ce790b8f2e33dfb5a9 \
     --hash=sha256:6e43f98e6c242fa2de6f8ea12eab24af63fa2ed3e89c06341fb9d92632c5cbdf \
     --hash=sha256:8565d4f5a0638da1bffde29832ed63c9e695c558611053add3b2dc0b56c92dbc \
-    --hash=sha256:b4d5cfa168e74d08f8ba6d58a7e49bc7daef4d58951ec69b66b0d56f4927a68d \
     --hash=sha256:c007d277218a50db8839e599ed78e0fffe5130f614c3f6d93ae257f282071a29 \
-    --hash=sha256:cbaa3bda75ef0d8836e1f8cc84af62f971b1d756d740efc95c38c3e04c0bfde2 \
     --hash=sha256:e4f709815924ec325b9a890e6ab2bbb0ceec8e319a4e257328eb752cf36b2efc
     # via vllm
 opencv-python-headless==4.13.0.92 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
@@ -775,21 +753,13 @@ py-cpuinfo==9.0.0 ; (platform_machine == 'aarch64' and sys_platform == 'linux') 
     --hash=sha256:859625bc251f64e21f077d099d4162689c762b5d6a4c3c97553d56241c9674d5
     # via vllm
 pybase64==1.4.3 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
-    --hash=sha256:1c0efcf78f11cf866bed49caa7b97552bc4855a892f9cc2372abcd3ed0056f0d \
     --hash=sha256:1d468b1b1ac5ad84875a46eaa458663c3721e8be5f155ade356406848d3701f6 \
     --hash=sha256:356ef1d74648ce997f5a777cf8f1aefecc1c0b4fe6201e0ef3ec8a08170e1b54 \
-    --hash=sha256:53d0ffe1847b16b647c6413d34d1de08942b7724273dd57e67dcbdb10c574045 \
     --hash=sha256:5b3365dbcbcdb0a294f0f50af0c0a16b27a232eddeeb0bceeefd844ef30d2a23 \
     --hash=sha256:5c29a582b0ea3936d02bd6fe9bf674ab6059e6e45ab71c78404ab2c913224414 \
-    --hash=sha256:66e3791f2ed725a46593f8bd2761ff37d01e2cdad065b1dceb89066f476e50c6 \
-    --hash=sha256:702bcaa16ae02139d881aeaef5b1c8ffb4a3fae062fe601d1e3835e10310a517 \
-    --hash=sha256:72bb0b6bddadab26e1b069bb78e83092711a111a80a0d6b9edcb08199ad7299b \
-    --hash=sha256:9a1792e8b830a92736dae58f0c386062eb038dfe8004fb03ba33b6083d89cd43 \
     --hash=sha256:b6b664758c804fa919b4f1257aa8cf68e95db76fc331de5f70bfc3a34655afe1 \
     --hash=sha256:bb632edfd132b3eaf90c39c89aa314beec4e946e210099b57d40311f704e11d4 \
-    --hash=sha256:c2ed274c9e0ba9c8f9c4083cfe265e66dd679126cd9c2027965d807352f3f053 \
-    --hash=sha256:c48361f90db32bacaa5518419d4eb9066ba558013aaf0c7781620279ecddaeb9 \
-    --hash=sha256:e97b7bdbd62e71898cd542a6a9e320d9da754ff3ebd02cb802d69087ee94d468
+    --hash=sha256:c2ed274c9e0ba9c8f9c4083cfe265e66dd679126cd9c2027965d807352f3f053
     # via vllm
 pycountry==26.2.16 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
     --hash=sha256:115c4baf7cceaa30f59a4694d79483c9167dbce7a9de4d3d571c5f3ea77c305a \
@@ -957,23 +927,15 @@ rignore==0.7.6 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or 
     --hash=sha256:00d3546cd793c30cb17921ce674d2c8f3a4b00501cb0e3dd0e82217dbeba2671 \
     --hash=sha256:1734dc49d1e9501b07852ef44421f84d9f378da9fbeda729e77db71f49cac28b \
     --hash=sha256:3efdcf1dd84d45f3e2bd2f93303d9be103888f56dfa7c3349b5bf4f0657ec696 \
-    --hash=sha256:5719ea14ea2b652c0c0894be5dfde954e1853a80dea27dd2fbaa749618d837f5 \
-    --hash=sha256:a04a3b73b75ddc12c9c9b21efcdaab33ca3832941d6f1d67bffd860941cd448a \
-    --hash=sha256:b5fd5ab3840b8c16851d327ed06e9b8be6459702a53e5ab1fc4073b684b3789e \
     --hash=sha256:bda49950d405aa8d0ebe26af807c4e662dd281d926530f03f29690a2e07d649a \
-    --hash=sha256:ced2a248352636a5c77504cb755dc02c2eef9a820a44d3f33061ce1bb8a7f2d2 \
     --hash=sha256:d24321efac92140b7ec910ac7c53ab0f0c86a41133d2bb4b0e6a7c94967f44dd
     # via fastapi-cloud-cli
 rpds-py==0.30.0 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
-    --hash=sha256:2e6ecb5a5bcacf59c3f912155044479af1d0b6681280048b338b28e364aca1f6 \
     --hash=sha256:47f236970bccb2233267d89173d3ad2703cd36a0e2a6e92d0560d333871a3d23 \
     --hash=sha256:73c67f2db7bc334e518d097c6d1e6fed021bbc9b7d678d6cc433478365d1d5f5 \
     --hash=sha256:7cee9c752c0364588353e627da8a7e808a66873672bcb5f52890c33fd965b394 \
-    --hash=sha256:a1010ed9524c73b94d15919ca4d41d8780980e1765babf85f9a2f90d247153dd \
     --hash=sha256:ca28829ae5f5d569bb62a79512c842a03a12576375d5ece7d2cadf8abe96ec28 \
-    --hash=sha256:d948b135c4693daff7bc2dcfc4ec57237a29bd37e60c2fabf5aff2bbacf3e2f1 \
-    --hash=sha256:dd8ff7cf90014af0c0f787eea34794ebf6415242ee1d6fa91eaba725cc441e84 \
-    --hash=sha256:f8d1736cfb49381ba528cd5baa46f82fdc65c06e843dab24dd70b63d09121b3f
+    --hash=sha256:dd8ff7cf90014af0c0f787eea34794ebf6415242ee1d6fa91eaba725cc441e84
     # via
     #   jsonschema
     #   referencing
@@ -1007,11 +969,9 @@ sentry-sdk==2.57.0 ; (platform_machine == 'aarch64' and sys_platform == 'linux')
     # via fastapi-cloud-cli
 setproctitle==1.3.7 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
     --hash=sha256:2906b6c7959cdb75f46159bf0acd8cc9906cf1361c9e1ded0d065fe8f9039629 \
-    --hash=sha256:3a57b9a00de8cae7e2a1f7b9f0c2ac7b69372159e16a7708aa2f38f9e5cc987a \
     --hash=sha256:6915964a6dda07920a1159321dcd6d94fc7fc526f815ca08a8063aeca3c204f1 \
     --hash=sha256:b7cb05bd446687ff816a3aaaf831047fc4c364feff7ada94a66024f1367b448c \
     --hash=sha256:bc2bc917691c1537d5b9bca1468437176809c7e11e5694ca79a9ca12345dcb9e \
-    --hash=sha256:cff72899861c765bd4021d1ff1c68d60edc129711a2fdba77f9cb69ef726a8b6 \
     --hash=sha256:d8828b356114f6b308b04afe398ed93803d7fca4a955dd3abe84430e28d33739
     # via vllm
 setuptools==77.0.3 \
@@ -1209,12 +1169,9 @@ vllm @ https://packages.redhat.com/api/pulp-content/public-rhai/rhoai/3.4/cpu-ub
 watchfiles==1.1.1 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
     --hash=sha256:1db5d7ae38ff20153d542460752ff397fcf5c96090c1230803713cf3147a6803 \
     --hash=sha256:28475ddbde92df1874b6c5c8aaeb24ad5be47a11f87cde5a28ef3835932e3e94 \
-    --hash=sha256:2edc3553362b1c38d9f06242416a5d8e9fe235c204a4072e988ce2e5bb1f69f6 \
     --hash=sha256:36193ed342f5b9842edd3532729a2ad55c4160ffcfa3700e0d54be496b70dd43 \
     --hash=sha256:8526e8f916bb5b9a0a777c8317c23ce65de259422bba5b31325a6fa6029d33af \
-    --hash=sha256:a173cb5c16c4f40ab19cecf48a534c409f7ea983ab8fed0741304a1c0a31b3f2 \
-    --hash=sha256:dcc5c24523771db3a294c77d94771abcfcb82a0e0ee8efd910c37c59ec1b31bb \
-    --hash=sha256:f8979280bdafff686ba5e4d8f97840f929a87ed9cdf133cbbd42f7766774d2aa
+    --hash=sha256:a173cb5c16c4f40ab19cecf48a534c409f7ea983ab8fed0741304a1c0a31b3f2
     # via
     #   uvicorn
     #   vllm

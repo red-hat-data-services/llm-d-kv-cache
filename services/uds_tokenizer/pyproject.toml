@@ -4,10 +4,7 @@ version = "0.1.0"
 description = "UDS Tokenizer Service - gRPC tokenization over Unix Domain Socket"
 requires-python = ">=3.12,<3.13"
 dependencies = [
-    # vLLM 0.18.0 CPU wheels — Linux-only, arch-conditional via PEP 508 markers
-    # NOTE - we have to specify the URL here to ensure this hits the CPU index first
-    "vllm @ https://packages.redhat.com/api/pulp-content/public-rhai/rhoai/3.4/cpu-ubi9/vllm-0.18.0+rhaiv.0-6-cp312-cp312-linux_x86_64.whl ; platform_system == 'Linux' and platform_machine == 'x86_64'",
-    "vllm @ https://packages.redhat.com/api/pulp-content/public-rhai/rhoai/3.4/cpu-ubi9/vllm-0.18.0+rhaiv.0-6-cp312-cp312-linux_aarch64.whl ; platform_system == 'Linux' and platform_machine == 'aarch64'",
+    "vllm==0.18.0+rhaiv.4",
     "pydantic>=2.12.0",
     "shortuuid>=1.0.13",
     "transformers>=4.57.0,<5",
@@ -20,10 +17,6 @@ dependencies = [
     "grpcio>=1.78.0",
     "grpcio-tools>=1.78.0",
     "grpcio-reflection>=1.78.0",
-    ################################ TEMPORARY WORKAROUND FOR STAGING INDEXES ################################
-    # We don't need to specify this anymore as it should have cleared the official index. Keeping around in case of build failures for debugging purposes
-    "intel-cmplr-lib-ur @ https://packages.redhat.com/api/pulp-content/public-rhai/rhoai/3.4/cpu-ubi9/intel_cmplr_lib_ur-2024.2.1-py2.py3-none-manylinux1_x86_64.whl ; platform_system == 'Linux' and platform_machine == 'x86_64'",
-    ##########################################################################################################
 ]
 
 [project.optional-dependencies]
@@ -39,11 +32,33 @@ name = "aipcc"
 url = "https://packages.redhat.com/api/pypi/public-rhai/rhoai/3.4/cpu-ubi9/simple/"
 default = true
 
+[[tool.uv.index]]
+name = "aipcc-test"
+url = "https://packages.redhat.com/api/pypi/public-rhai/rhoai/3.4/cpu-ubi9-test/simple/"
+explicit = true
+
+[[tool.uv.index]]
+name = "pypi"
+url = "https://pypi.org/simple/"
+explicit = true
+
 [tool.uv]
+# Replace PyPI with our internal index. Using index-url (instead of
+# extra-index-url) means uv/pip will NOT fall back to pypi.org.
+index-url = "https://packages.redhat.com/api/pypi/public-rhai/rhoai/3.4/cpu-ubi9/simple/"
+# Only resolve for our actual target platforms (Linux x86_64 and aarch64).
+environments = [
+    "platform_system == 'Linux' and platform_machine == 'x86_64'",
+    "platform_system == 'Linux' and platform_machine == 'aarch64'",
+]
 # Drop modelscope (not mirrored in AIPCC); marker is always false.
 override-dependencies = [
     "modelscope; python_version < '0'",
 ]
+
+[tool.uv.sources]
+vllm = { index = "aipcc-test" }
+pytest-timeout = { index = "pypi" }
 
 [tool.ruff]
 exclude = ["tokenizerpb/*_pb2.py", "tokenizerpb/*_pb2_grpc.py"]

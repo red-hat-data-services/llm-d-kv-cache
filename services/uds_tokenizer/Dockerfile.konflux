@@ -91,6 +91,8 @@ print('smoke test passed')"
 # Final stage
 FROM runtime
 
+ENV VLLM_TARGET_DEVICE=cpu
+
 LABEL com.redhat.component="odh-llm-d-kv-cache-rhel9" \
       name="odh-llm-d-kv-cache-rhel9" \
       description="odh-llm-d-kv-cache" \

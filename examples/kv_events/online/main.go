@@ -138,9 +138,8 @@ func getKVCacheIndexerConfig() (*kvcache.Config, error) {
 		return nil, err
 	}
 
-	if err := helper.ConfigureInternalTokenizer(config, testdata.ModelName); err != nil {
-		return nil, err
-	}
+	config.TokenizersPoolConfig.ModelName = testdata.ModelName
+	helper.ApplyTokenizerEndpoint(config)
 
 	config.KVBlockIndexConfig.EnableMetrics = true
 	config.KVBlockIndexConfig.MetricsLoggingInterval = 30 * time.Second

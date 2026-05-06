@@ -3,7 +3,7 @@ WHEEL_DIR = wheels
 DIST_DIR = dist
 VERSION := $(shell $(PYTHON) -c "import tomllib; print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])")
 
-.PHONY: wheel build test test-performance clean check-gds
+.PHONY: wheel build test clean check-gds
 
 # Install build dependencies
 deps:
@@ -19,9 +19,8 @@ check-gds:
 	fi
 
 # Build wheel into dist/ and copy .whl into wheels/
-# FS_PORTABLE_WHEEL=1 enables -static-libstdc++ for the redistributable wheel.
 wheel: deps
-	FS_PORTABLE_WHEEL=1 $(PYTHON) -m pip wheel . -w $(DIST_DIR)
+	$(PYTHON) -m pip wheel . -w $(DIST_DIR)
 	cp $(DIST_DIR)/llmd_fs_connector-$(VERSION)-*.whl $(WHEEL_DIR)/
 	@echo ""
 	@echo "Wheel created in $(WHEEL_DIR):"
@@ -31,13 +30,9 @@ wheel: deps
 build:
 	$(PYTHON) -m pip install -e .
 
-# Run unit tests (excludes the performance/ directory)
+# Run tests
 test:
-	pytest ./tests/ -v -sq --ignore=./tests/performance
-
-# Run performance tests (throughput + stress sweep)
-test-performance:
-	pytest ./tests/performance/ -v -sq
+	pytest ./tests/ -v -sq
 
 # Clean local build artifacts
 clean:

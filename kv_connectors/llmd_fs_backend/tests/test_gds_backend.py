@@ -100,8 +100,9 @@ class TestGDSAvailability:
 
         import math
 
+        from test_fs_backend import roundtrip_once
+
         from llmd_fs_backend.file_mapper import FileMapper
-        from tests.test_fs_backend import roundtrip_once
 
         num_layers = 80
         num_blocks = 8
@@ -146,7 +147,7 @@ class TestGDSAvailability:
             write_block_ids=block_ids,
             gpu_blocks_per_file=gpu_blocks_per_file,
             threads_per_gpu=threads_per_gpu,
-            extra_config={"gds_mode": "read_write"},
+            gds_mode="read_write",
         )
 
         print(

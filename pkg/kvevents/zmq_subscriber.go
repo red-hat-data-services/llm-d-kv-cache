@@ -127,10 +127,6 @@ func (z *zmqSubscriber) runSubscriber(ctx context.Context) {
 		seqBytes := parts[1]
 		payload := parts[2]
 
-		if len(seqBytes) < 8 {
-			debugLogger.Error(nil, "Sequence frame too short", "got", len(seqBytes), "want", 8, "topic", topic, "endpoint", z.endpoint)
-			continue
-		}
 		seq := binary.BigEndian.Uint64(seqBytes)
 
 		debugLogger.V(logging.TRACE).Info("Received message from zmq subscriber",

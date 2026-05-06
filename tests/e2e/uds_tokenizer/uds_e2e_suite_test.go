@@ -1,3 +1,5 @@
+//go:build !embedded_tokenizers
+
 /*
 Copyright 2026 The llm-d Authors.
 
@@ -108,14 +110,12 @@ func (s *UDSTokenizerSuite) SetupTest() {
 	s.config, err = kvcache.NewDefaultConfig()
 	s.Require().NoError(err)
 
-	tokenizerPoolConfig, err := tokenization.DefaultConfig()
-	s.Require().NoError(err)
-	tokenizerPoolConfig.ModelName = defaultModelName
-	tokenizerPoolConfig.UdsTokenizerConfig = &tokenization.UdsTokenizerConfig{
+	// Configure UDS tokenizer to use TCP for testing
+	s.config.TokenizersPoolConfig.ModelName = defaultModelName
+	s.config.TokenizersPoolConfig.UdsTokenizerConfig = &tokenization.UdsTokenizerConfig{
 		SocketFile: s.grpcAddress,
 		UseTCP:     true,
 	}
-	s.config.TokenizersPoolConfig = tokenizerPoolConfig
 
 	s.tokenProcessorConfig = kvblock.DefaultTokenProcessorConfig()
 	s.tokenProcessorConfig.BlockSize = 4

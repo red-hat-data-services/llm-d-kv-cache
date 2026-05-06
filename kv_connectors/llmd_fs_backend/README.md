@@ -2,7 +2,7 @@
 
 ## Overview
 
-The llmd-fs-backend extends the native [vLLM Offloading Connector](#offloading-connector-docs) to support file system and object store backends, with the object store backend support provided by NIXL.
+The llmd-fs-backend extends the native [vLLM Offloading Connector](#offloading-connector-docs) to support a file system backend.
 This backend provides a shared-storage offloading layer for vLLM. It moves KV-cache blocks between GPU and shared storage efficiently using:
 
 - GPU block transfers using GPU DMA (default) or optional GPU-kernel-based copying using GPU SMs.
@@ -11,7 +11,7 @@ This backend provides a shared-storage offloading layer for vLLM. It moves KV-ca
 - NUMA-aware CPU scheduling of worker threads
 - Atomic file writes and reads
 
-The fs connector is suitable for shared storage, as well as a local disk.
+The fs connector (an offloading connector with a file system backend) is suitable for shared storage, as well as a local disk.
 
 For architectural clarity, the fs backend is not responsible for cleanup. It is up to the storage system to manage this.
 For simple setups, see the **Storage Cleanup** section.
@@ -20,37 +20,24 @@ For simple setups, see the **Storage Cleanup** section.
 
 ## System Requirements
 
-- vLLM version 0.19.x. Previous vLLM lines are supported via matching wheel versions on the pip index — vLLM 0.X.x uses `llmd-fs-connector==0.X` (see [Installation](#installation)).
+- vLLM version 0.18.x. Previous versions are supported via their matching wheels in the [wheels](./wheels) folder or the corresponding llm-d-kv-cache release assets.
 
 ## Installation
 
-### 1. Install from the pip index (Recommended)
-
-The connector is published as a PEP 503 simple index hosted on GitHub Pages. The index points at wheel assets attached to GitHub Releases — `pip` auto-selects amd64 vs arm64 from your platform.
-
-CUDA 12 (default):
+### 1. Install from a pre-built wheel (Recommended)
 
 ```bash
-pip install 'llmd-fs-connector==0.19' \
-  --extra-index-url https://llm-d.github.io/llm-d-kv-cache/simple/
+pip install https://raw.githubusercontent.com/llm-d/llm-d-kv-cache/main/kv_connectors/llmd_fs_backend/wheels/llmd_fs_connector-0.18-cp312-cp312-linux_x86_64.whl
 ```
 
-CUDA 13:
+This installs:
 
-```bash
-pip install 'llmd-fs-connector==0.19' \
-  --extra-index-url https://llm-d.github.io/llm-d-kv-cache/simple/cu130/
-```
+* Python module `llmd_fs_backend`
+* CUDA extension `storage_offload.so`
 
-For an older vLLM release, match the pin to your vLLM line — vLLM 0.X.x uses `==0.X` (e.g. vLLM 0.18.x):
-
-```bash
-pip install 'llmd-fs-connector==0.18' \
-  --extra-index-url https://llm-d.github.io/llm-d-kv-cache/simple/
-```
-
-Or download a wheel manually from the release assets at <https://github.com/llm-d/llm-d-kv-cache/releases>.
-
+Each llm-d release is aligned with the appropriate `vLLM` and `llm-d-kv-cache` versions.
+You can download the matching wheel from the release assets and install it manually from:
+https://github.com/llm-d/llm-d-kv-cache/releases/latest
 ### 2. Build from source (compile yourself)
 
 Requires CUDA toolkit and system dependencies.
@@ -71,16 +58,6 @@ cd llm-d-kv-cache-manager/kv_connectors/llmd_fs_backend
 pip install -e .
 ```
 
-Alternatively, you can build and push a development container image directly using the provided `Dockerfile.dev`. This image includes all dependencies and performs an editable installation:
-
-```bash
-# Build from the root of the repository
-make image-fs-backend-build IMAGE_TAG_BASE=<your-base-container-registry> FS_BACKEND_NAME=<image-name> DEV_VERSION=<dev-version>
-
-# Push the development image
-make image-fs-backend-push IMAGE_TAG_BASE=<your-base-container-registry> FS_BACKEND_NAME=<image-name> DEV_VERSION=<dev-version>
-```
-
 ## Configuration Flags
 
 ### Connector parameters
@@ -89,9 +66,7 @@ make image-fs-backend-push IMAGE_TAG_BASE=<your-base-container-registry> FS_BACK
 - `block_size`: number of tokens stored per file (must be in granulaity of GPU block size).
 - `threads_per_gpu`: number of I/O threads per GPU
 - `max_staging_memory_gb`: total staging memory limit
-- `max_write_queued_seconds`: maximum time budget (in seconds) for queued writes before excess writes are dropped (default: `10.0`, set to `0` to disable). The actual write queue depth limit is computed dynamically as `threads_per_gpu * max_write_queued_seconds / avg_write_duration`. For example, with 64 threads and `max_write_queued_seconds=10`: on fast NVMe storage (20ms avg write) the limit is ~32,000 (effectively unlimited), while on slow block storage (2s avg write) the limit is ~320. Dropped writes result in cache misses on future reads, not data loss.
 - `gds_mode`: GPUDirect Storage mode (default: `disabled`). See [GPUDirect Storage (GDS)](./docs/gds.md) for options, requirements, and verification.
-- `backend`: POSIX, OBJ (default: `POSIX`)
 
 ### Environment variables
 - `STORAGE_LOG_LEVEL`: set the log level for both C++ and Python (`trace`, `debug`, `info`, `warn`, `error`). Default: `info`

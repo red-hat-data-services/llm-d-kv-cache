@@ -11,7 +11,11 @@ supported-markers = [
 ]
 
 [manifest]
-overrides = [{ name = "modelscope", marker = "python_full_version < '0'" }]
+overrides = [
+    { name = "modelscope", marker = "python_full_version < '0'" },
+    { name = "prometheus-fastapi-instrumentator", specifier = ">=8.0.0" },
+    { name = "starlette", specifier = ">=1.3.1" },
+]
 
 [[package]]
 name = "aiohappyeyeballs"
@@ -1053,14 +1057,14 @@ wheels = [
 
 [[package]]
 name = "prometheus-fastapi-instrumentator"
-version = "7.1.0"
+version = "8.0.0"
 source = { registry = "https://packages.redhat.com/api/pypi/public-rhai/rhoai/3.4/cpu-ubi9/simple/" }
 dependencies = [
     { name = "prometheus-client", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
     { name = "starlette", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
 ]
 wheels = [
-    { url = "https://packages.redhat.com/api/pulp-content/public-rhai/rhoai/3.4/cpu-ubi9/prometheus_fastapi_instrumentator-7.1.0-2-py3-none-any.whl", hash = "sha256:81bf98e5dfcde3e67a092c4bde69883d2bcd9fe48a30c38ed3e502b99ec945c1" },
+    { url = "https://packages.redhat.com/api/pulp-content/public-rhai/rhoai/3.4/cpu-ubi9/prometheus_fastapi_instrumentator-8.0.0-2-py3-none-any.whl", hash = "sha256:dfd538d39e19955bcb2d9363287c80bed29c11276fdcd89bac52ee2991b2ea31" },
 ]
 
 [[package]]
@@ -1460,14 +1464,14 @@ wheels = [
 
 [[package]]
 name = "starlette"
-version = "0.52.1"
+version = "1.3.1"
 source = { registry = "https://packages.redhat.com/api/pypi/public-rhai/rhoai/3.4/cpu-ubi9/simple/" }
 dependencies = [
     { name = "anyio", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
     { name = "typing-extensions", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
 ]
 wheels = [
-    { url = "https://packages.redhat.com/api/pulp-content/public-rhai/rhoai/3.4/cpu-ubi9/starlette-0.52.1-2-py3-none-any.whl", hash = "sha256:15cab9abd470878d821725fb268a3faa4afb15d9c1dcede7ea1ff463feb50188" },
+    { url = "https://packages.redhat.com/api/pulp-content/public-rhai/rhoai/3.4/cpu-ubi9/starlette-1.3.1-2-py3-none-any.whl", hash = "sha256:1076ce1d57b000b509f126da9bb439b4af3ebd798fe4fa998a02640d4d3fe92f" },
 ]
 
 [[package]]

@@ -52,8 +52,11 @@ environments = [
     "platform_system == 'Linux' and platform_machine == 'aarch64'",
 ]
 # Drop modelscope (not mirrored in AIPCC); marker is always false.
+# CVE-2026-54283: force starlette >=1.3.1 and prometheus-fastapi-instrumentator >=8.0.0
 override-dependencies = [
     "modelscope; python_version < '0'",
+    "starlette>=1.3.1",
+    "prometheus-fastapi-instrumentator>=8.0.0",
 ]
 
 [tool.uv.sources]

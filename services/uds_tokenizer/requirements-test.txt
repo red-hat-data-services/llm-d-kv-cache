@@ -416,8 +416,8 @@ prometheus-client==0.25.0 ; (platform_machine == 'aarch64' and sys_platform == '
     # via
     #   prometheus-fastapi-instrumentator
     #   vllm
-prometheus-fastapi-instrumentator==7.1.0 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
-    --hash=sha256:81bf98e5dfcde3e67a092c4bde69883d2bcd9fe48a30c38ed3e502b99ec945c1
+prometheus-fastapi-instrumentator==8.0.0 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
+    --hash=sha256:dfd538d39e19955bcb2d9363287c80bed29c11276fdcd89bac52ee2991b2ea31
     # via vllm
 propcache==0.4.1 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
     --hash=sha256:2c44e59f67229ce44cd71d778fc1c3c2ada5d98f0e3a383eb65129bbddab6755 \
@@ -616,8 +616,8 @@ sniffio==1.3.1 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or 
 sse-starlette==3.3.4 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
     --hash=sha256:989e06143d625db8ba266b8ed210877e19dd3c3400d65ddc6d144a2ad522a219
     # via mcp
-starlette==0.52.1 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
-    --hash=sha256:15cab9abd470878d821725fb268a3faa4afb15d9c1dcede7ea1ff463feb50188
+starlette==1.3.1 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
+    --hash=sha256:1076ce1d57b000b509f126da9bb439b4af3ebd798fe4fa998a02640d4d3fe92f
     # via
     #   fastapi
     #   mcp

@@ -17,6 +17,7 @@ dependencies = [
     "grpcio>=1.78.0",
     "grpcio-tools>=1.78.0",
     "grpcio-reflection>=1.78.0",
+    "urllib3==2.7.0",
 ]
 
 [project.optional-dependencies]

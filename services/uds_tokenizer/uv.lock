@@ -1659,6 +1659,7 @@ dependencies = [
     { name = "shortuuid", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
     { name = "tiktoken", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
     { name = "transformers", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
+    { name = "urllib3", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
     { name = "vllm", marker = "(platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
 ]
 
@@ -1688,16 +1689,17 @@ requires-dist = [
     { name = "shortuuid", specifier = ">=1.0.13" },
     { name = "tiktoken", specifier = ">=0.12.0" },
     { name = "transformers", specifier = ">=4.57.0,<5" },
+    { name = "urllib3", specifier = "==2.7.0" },
     { name = "vllm", specifier = "==0.18.0+rhaiv.4", index = "https://packages.redhat.com/api/pypi/public-rhai/rhoai/3.4/cpu-ubi9-test/simple/" },
 ]
 provides-extras = ["test"]
 
 [[package]]
 name = "urllib3"
-version = "2.6.3"
+version = "2.7.0"
 source = { registry = "https://packages.redhat.com/api/pypi/public-rhai/rhoai/3.4/cpu-ubi9/simple/" }
 wheels = [
-    { url = "https://packages.redhat.com/api/pulp-content/public-rhai/rhoai/3.4/cpu-ubi9/urllib3-2.6.3-2-py3-none-any.whl", hash = "sha256:e0260bcb8dc9a00766b1263632d4cea3d51ce498787c24062ef187f6ce351fdc" },
+    { url = "https://packages.redhat.com/api/pulp-content/public-rhai/rhoai/3.4/cpu-ubi9/urllib3-2.7.0-2-py3-none-any.whl", hash = "sha256:fa362060799d5cec112613712db5e3abd6c59c962cf2f532a3bcbb19f52c4750" },
 ]
 
 [[package]]

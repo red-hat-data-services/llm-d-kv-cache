@@ -723,11 +723,12 @@ typing-inspection==0.4.2 ; (platform_machine == 'aarch64' and sys_platform == 'l
     #   mcp
     #   pydantic
     #   pydantic-settings
-urllib3==2.6.3 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
-    --hash=sha256:e0260bcb8dc9a00766b1263632d4cea3d51ce498787c24062ef187f6ce351fdc
+urllib3==2.7.0 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
+    --hash=sha256:fa362060799d5cec112613712db5e3abd6c59c962cf2f532a3bcbb19f52c4750
     # via
     #   requests
     #   sentry-sdk
+    #   uds-tokenizer
 uvicorn==0.44.0 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
     --hash=sha256:d46d38d194ddc85042efa2187102cfaa6e0c1ca69aa3e3f913c4e7c9a5345470
     # via

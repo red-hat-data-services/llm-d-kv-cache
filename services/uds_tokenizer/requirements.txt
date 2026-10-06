@@ -409,8 +409,8 @@ prometheus-client==0.25.0 ; (platform_machine == 'aarch64' and sys_platform == '
     # via
     #   prometheus-fastapi-instrumentator
     #   vllm
-prometheus-fastapi-instrumentator==7.1.0 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
-    --hash=sha256:81bf98e5dfcde3e67a092c4bde69883d2bcd9fe48a30c38ed3e502b99ec945c1
+prometheus-fastapi-instrumentator==8.0.0 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
+    --hash=sha256:dfd538d39e19955bcb2d9363287c80bed29c11276fdcd89bac52ee2991b2ea31
     # via vllm
 propcache==0.4.1 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
     --hash=sha256:2c44e59f67229ce44cd71d778fc1c3c2ada5d98f0e3a383eb65129bbddab6755 \
@@ -593,8 +593,8 @@ sniffio==1.3.1 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or 
 sse-starlette==3.3.4 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
     --hash=sha256:989e06143d625db8ba266b8ed210877e19dd3c3400d65ddc6d144a2ad522a219
     # via mcp
-starlette==0.52.1 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
-    --hash=sha256:15cab9abd470878d821725fb268a3faa4afb15d9c1dcede7ea1ff463feb50188
+starlette==1.3.1 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
+    --hash=sha256:1076ce1d57b000b509f126da9bb439b4af3ebd798fe4fa998a02640d4d3fe92f
     # via
     #   fastapi
     #   mcp
@@ -639,11 +639,9 @@ torchaudio==2.10.0 ; (platform_machine == 'aarch64' and sys_platform == 'linux')
     --hash=sha256:9533bbea01f124c21751ff97486f506d1669a7bdff831eb4b40a54d3b97f8744 \
     --hash=sha256:b28043e939d1906a05ab89169663f16d8e77934efe030d591522b0412a8deb70
     # via vllm
-torchvision==0.25.0 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
-    --hash=sha256:2266368b095340c276c8d11ddbc511aa155debe4aa16561f877a236b85c32ad9 \
-    --hash=sha256:4e71b1ab8e547cdaa37b3b1c3cac85966428ae5ea9e2a47e7d78396d6721af88 \
-    --hash=sha256:6980ba0357133382a09f6a33e03e6f63c3855b13c9eb09da96070919a08a6965 \
-    --hash=sha256:7bce4686716743f69a486d550797b406c20181f895c34a903065cefbfd0e27ad
+torchvision==0.25.0+rhaiv.1 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
+    --hash=sha256:7465281ded467d1c6d8757c56e3787d0506a269ce636fb77d384b0e69fe7bdb0 \
+    --hash=sha256:ce0dfd118424172df432c51f730760624dbc326b4aa5443c6719b1442b9decac
     # via vllm
 tqdm==4.67.3 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
     --hash=sha256:1d3926bb32f7a78caef9f43a4563410a764badb0693e981e8db6f29c4038c827

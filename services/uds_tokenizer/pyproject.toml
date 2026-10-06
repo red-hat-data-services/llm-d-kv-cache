@@ -56,6 +56,9 @@ environments = [
 override-dependencies = [
     "modelscope; python_version < '0'",
 ]
+constraint-dependencies = [
+    "starlette>=1.0.1",
+]
 
 [tool.uv.sources]
 vllm = { index = "aipcc-test" }

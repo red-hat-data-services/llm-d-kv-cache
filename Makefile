@@ -18,6 +18,7 @@ BUILD_REF ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo $(
 LDFLAGS := -X '$(VERSION_PKG).CommitSHA=$(GIT_COMMIT)' -X '$(VERSION_PKG).BuildRef=$(BUILD_REF)'
 
 PYTHON_EXE := $(shell command -v python3.12 || command -v python3)
+RUFF_VERSION ?= 0.14.0
 
 CONTAINER_TOOL := $(shell { command -v docker >/dev/null 2>&1 && echo docker; } || { command -v podman >/dev/null 2>&1 && echo podman; })
 
@@ -394,7 +395,7 @@ check-podman:
 check-ruff:
 	@command -v ruff >/dev/null 2>&1 || { \
 	  echo "ruff is not installed. Installing..."; \
-	  pip install ruff; \
+	  pip install "ruff==$(RUFF_VERSION)"; \
 	}
 
 ##@ Alias checking

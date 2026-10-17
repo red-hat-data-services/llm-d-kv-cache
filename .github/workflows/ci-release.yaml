@@ -7,9 +7,15 @@ on:
   release:
     types: [published]  # Also runs when a GitHub release is published
 
+permissions:
+  contents: read
+  packages: write
+  security-events: write
+
 jobs:
   docker-build-and-push:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - name: Checkout source
         uses: actions/checkout@v6

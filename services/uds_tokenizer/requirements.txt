@@ -128,8 +128,8 @@ fastar==0.11.0 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or 
     --hash=sha256:056fcc9a043c0f952b73ba978904907e5fb538e0baba25ff9904c3965686f362 \
     --hash=sha256:f85ea61811d1fed6a5bcbfce8f874660cf799d7a24f71727f5922b88db4bf50e
     # via fastapi-cloud-cli
-filelock==3.28.0 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
-    --hash=sha256:34d374b4af4cd28a6627d7cc13ee8f8e1ab79e0d8cffe18f6ffa14299af74c4f
+filelock==4.2.4 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
+    --hash=sha256:d642bfd9b48720a5de940570ae0af8f0f1f46ff25ae58689fd5930d4e835e43b
     # via
     #   huggingface-hub
     #   torch

@@ -13,6 +13,7 @@ supported-markers = [
 [manifest]
 constraints = [
     { name = "anyio", specifier = ">=4.14.2" },
+    { name = "filelock", specifier = ">=4.2.1" },
     { name = "fsspec", specifier = ">=2026.6.0" },
     { name = "mcp", specifier = ">=1.30.0" },
     { name = "starlette", specifier = ">=1.0.1" },
@@ -363,10 +364,10 @@ wheels = [
 
 [[package]]
 name = "filelock"
-version = "3.28.0"
+version = "4.2.4"
 source = { registry = "https://packages.redhat.com/api/pypi/public-rhai/rhoai/3.4/cpu-ubi9/simple/" }
 wheels = [
-    { url = "https://packages.redhat.com/api/pulp-content/public-rhai/rhoai/3.4/cpu-ubi9/filelock-3.28.0-2-py3-none-any.whl", hash = "sha256:34d374b4af4cd28a6627d7cc13ee8f8e1ab79e0d8cffe18f6ffa14299af74c4f", size = 40202, upload-time = "2026-04-15T01:00:20.665Z" },
+    { url = "https://packages.redhat.com/api/pulp-content/public-rhai/rhoai/3.4/cpu-ubi9/filelock-4.2.4-2-py3-none-any.whl", hash = "sha256:d642bfd9b48720a5de940570ae0af8f0f1f46ff25ae58689fd5930d4e835e43b", size = 163479, upload-time = "2026-10-22T11:59:11.21Z" },
 ]
 
 [[package]]

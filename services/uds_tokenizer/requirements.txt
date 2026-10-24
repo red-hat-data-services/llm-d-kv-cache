@@ -3,9 +3,9 @@
 aiohappyeyeballs==2.6.1 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
     --hash=sha256:c6a86408878a5b6b76ae6cd305f79ac9f690a38b21af183e00c150ef3f569d29
     # via aiohttp
-aiohttp==3.14.3 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
-    --hash=sha256:8e35a7ea31e4d119f1c7a3dc83ce156df17fae12dd65c13ff96511661c40e852 \
-    --hash=sha256:ebc9e85da50e98cc571b339a5e3ccfc19d928729a5ac05bafbce880609a54585
+aiohttp==3.14.4 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
+    --hash=sha256:57a7468b5b1d8d1fb35fd1566a59852f1dfcf2dea8030baed3e76003ee545cae \
+    --hash=sha256:c939ca80421468600f737e69e7485df26594f587dae7c8495a0e8b71278f1a58
     # via
     #   uds-tokenizer
     #   vllm
@@ -23,8 +23,8 @@ annotated-types==0.7.0 ; (platform_machine == 'aarch64' and sys_platform == 'lin
 anthropic==0.95.0 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
     --hash=sha256:e5e9bfe927ae50fa03e5ac6388f74bbafbfe694f802110ef9a2978ccb106e425
     # via vllm
-anyio==4.13.0 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
-    --hash=sha256:2d5b8da6df21a1e87f68df768a75f25cd00792b401d6c16e8235bf64642b8316
+anyio==4.14.2 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
+    --hash=sha256:c364056b26f7d3d87c8575a2da04f24a43e6c0a56a3a1c19aa7fed774436e026
     # via
     #   anthropic
     #   httpx
@@ -128,8 +128,8 @@ fastar==0.11.0 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or 
     --hash=sha256:056fcc9a043c0f952b73ba978904907e5fb538e0baba25ff9904c3965686f362 \
     --hash=sha256:f85ea61811d1fed6a5bcbfce8f874660cf799d7a24f71727f5922b88db4bf50e
     # via fastapi-cloud-cli
-filelock==3.28.0 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
-    --hash=sha256:34d374b4af4cd28a6627d7cc13ee8f8e1ab79e0d8cffe18f6ffa14299af74c4f
+filelock==4.2.4 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
+    --hash=sha256:d642bfd9b48720a5de940570ae0af8f0f1f46ff25ae58689fd5930d4e835e43b
     # via
     #   huggingface-hub
     #   torch
@@ -141,8 +141,8 @@ frozenlist==1.8.0 ; (platform_machine == 'aarch64' and sys_platform == 'linux') 
     # via
     #   aiohttp
     #   aiosignal
-fsspec==2026.3.0 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
-    --hash=sha256:ec228d12e40742da7c869a80532b5619cd29b3e7219b8cec5d1afb78f8fc22be
+fsspec==2026.6.0 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
+    --hash=sha256:e17e7628d5f4b924e5e348f3bfd7641864385afd95ae9eac45e60c7e49e7dd7e
     # via
     #   huggingface-hub
     #   torch
@@ -278,8 +278,8 @@ markupsafe==3.0.3 ; (platform_machine == 'aarch64' and sys_platform == 'linux') 
     --hash=sha256:10c0e3022c2cead724cb6e31b1cc368b423b2995a9461d3ab844f1eb894b6ed1 \
     --hash=sha256:3e5e2eda8f7612f1e59c261040e824f4a7a80872df58731ca46f248646d6356b
     # via jinja2
-mcp==1.27.0 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
-    --hash=sha256:d3efec95549c347c975210fb9389a8e9e5649e601e16c9dea0c7a09c9eb3ca05
+mcp==1.30.0 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
+    --hash=sha256:ea0bd8706f6c9d295cb53a865180babf11d69678c31bf80e5e28fd8376aa5d08
     # via vllm
 mdurl==0.1.2 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
     --hash=sha256:6d8be534d152bbbbd9e3866e8addbacae1fb09801f0436469909c7295ae89f6e
@@ -707,8 +707,8 @@ typing-inspection==0.4.2 ; (platform_machine == 'aarch64' and sys_platform == 'l
     #   mcp
     #   pydantic
     #   pydantic-settings
-urllib3==2.7.0 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
-    --hash=sha256:fa362060799d5cec112613712db5e3abd6c59c962cf2f532a3bcbb19f52c4750
+urllib3==2.8.0 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
+    --hash=sha256:f8c24c836496998a6c9b2d4579d7d6cf5bb066377a646fe022c6252e2411150a
     # via
     #   requests
     #   sentry-sdk
@@ -742,13 +742,9 @@ xgrammar==0.1.33 ; (platform_machine == 'aarch64' and sys_platform == 'linux') o
     --hash=sha256:1c467731301f76363523686236bb4adbe89cf40ec61c660003058c496e6dd7c5 \
     --hash=sha256:cb25b510dff833785ceee9ed4a0fecb04e68077b38a2c3fd6c6e4c4db19fc51e
     # via vllm
-yarl==1.23.0 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
-    --hash=sha256:01096c612974da308601fd776d0456bbe34237c3caea6f38856491da554bb17d \
-    --hash=sha256:131d99d551599d502d0c3e9768cd2620bd44da224c5efc4b74d9befc9de6adba \
-    --hash=sha256:255be9da2dc3317c3333938906d73e55ff830b9b4b4a450a4bcfebbcff872434 \
-    --hash=sha256:33314ca5a10f1423a78aed02ff7247466a279075b8ccffc67d4cd0f5eedd23ed \
-    --hash=sha256:475fdf092b813bfdb8e32aa8ee2431aaa2113472d58b5819e0ba0fcfc6090c05 \
-    --hash=sha256:4cd7f2925038c86bb461a722ce74e964e98bfe80b3a0c3bce3341f549fb3eb6b
+yarl==1.25.1 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
+    --hash=sha256:5d707c78ccedcac5ba9732e4f0a58c42e5e1780c70a7ea6dd71889c3a9eb6edf \
+    --hash=sha256:c781f7923b80b15739aa7c0ab403fc05f28f9fb3f5797b0cfa6789f0d3d627ff
     # via aiohttp
 zipp==3.23.1 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
     --hash=sha256:cd42f70222f403c6381c170e7e5744fd5fb0ec91aed2c42987c20e82ceae7df5

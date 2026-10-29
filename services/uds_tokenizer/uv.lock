@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = "==3.12.*"
 resolution-markers = [
     "platform_machine == 'x86_64' and sys_platform == 'linux'",
@@ -13,12 +13,13 @@ supported-markers = [
 [manifest]
 constraints = [
     { name = "anyio", specifier = ">=4.14.2" },
+    { name = "certifi", specifier = ">=2026.10.19" },
     { name = "filelock", specifier = ">=4.2.1" },
     { name = "fsspec", specifier = ">=2026.6.0" },
     { name = "mcp", specifier = ">=1.30.0" },
     { name = "starlette", specifier = ">=1.0.1" },
 ]
-overrides = [{ name = "modelscope", marker = "python_full_version < '0'" }]
+overrides = [{ name = "modelscope", marker = "python_version < '0'" }]
 
 [[package]]
 name = "aiohappyeyeballs"
@@ -149,10 +150,10 @@ wheels = [
 
 [[package]]
 name = "certifi"
-version = "2026.2.25"
+version = "2026.10.19"
 source = { registry = "https://packages.redhat.com/api/pypi/public-rhai/rhoai/3.4/cpu-ubi9/simple/" }
 wheels = [
-    { url = "https://packages.redhat.com/api/pulp-content/public-rhai/rhoai/3.4/cpu-ubi9/certifi-2026.2.25-2-py3-none-any.whl", hash = "sha256:89b205c5656277a076916d355623beb9922d01b1faa8a71292ddbb2772267334", size = 4775, upload-time = "2026-03-13T12:22:02.824Z" },
+    { url = "https://packages.redhat.com/api/pulp-content/public-rhai/rhoai/3.4/cpu-ubi9/certifi-2026.10.19-2-py3-none-any.whl", hash = "sha256:a9e529417c25c16e8f43e8ef64ac1a28856efacaae56dcba1809ca187dc032d9", size = 5339, upload-time = "2026-10-21T17:51:12.405Z" },
 ]
 
 [[package]]

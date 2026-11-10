@@ -1037,11 +1037,11 @@ wheels = [
 
 [[package]]
 name = "pillow"
-version = "12.3.0"
+version = "13.0.0"
 source = { registry = "https://packages.redhat.com/api/pypi/public-rhai/rhoai/3.4/cpu-ubi9/simple/" }
 wheels = [
-    { url = "https://packages.redhat.com/api/pulp-content/public-rhai/rhoai/3.4/cpu-ubi9/pillow-12.3.0-2-cp312-cp312-linux_aarch64.whl", hash = "sha256:a0ae23976c3a950d107fe1412f595be73c5d2de8071d26298a1f623bae5a58a1", size = 1372893, upload-time = "2026-07-14T19:26:50.369Z" },
-    { url = "https://packages.redhat.com/api/pulp-content/public-rhai/rhoai/3.4/cpu-ubi9/pillow-12.3.0-2-cp312-cp312-linux_x86_64.whl", hash = "sha256:8dc435092a6842d8483be410e080e5c1eccd7aa991f30787cd9601eedcccf260", size = 1402264, upload-time = "2026-07-14T19:29:11.347Z" },
+    { url = "https://packages.redhat.com/api/pulp-content/public-rhai/rhoai/3.4/cpu-ubi9/pillow-13.0.0-2-cp312-cp312-linux_aarch64.whl", hash = "sha256:5cd28e40a6774d00ca9eedbc3367deb5bba81f776d3feca88f9d15a78f166675", size = 1394150, upload-time = "2026-10-20T22:50:30.488Z" },
+    { url = "https://packages.redhat.com/api/pulp-content/public-rhai/rhoai/3.4/cpu-ubi9/pillow-13.0.0-2-cp312-cp312-linux_x86_64.whl", hash = "sha256:64db2d39eee6e20e1168fb85be078f1ad4a9e5c8da6b795462d1933b7d86b1a9", size = 1421717, upload-time = "2026-10-20T22:11:12.77Z" },
 ]
 
 [[package]]

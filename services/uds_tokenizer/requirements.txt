@@ -397,9 +397,9 @@ packaging==26.1 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or
 partial-json-parser==0.2.1.1.post7 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
     --hash=sha256:3c5cd87a918bc24ba42cc13d54210b43c77fc020f1704503207b9ec10d29f124
     # via vllm
-pillow==12.3.0 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
-    --hash=sha256:8dc435092a6842d8483be410e080e5c1eccd7aa991f30787cd9601eedcccf260 \
-    --hash=sha256:a0ae23976c3a950d107fe1412f595be73c5d2de8071d26298a1f623bae5a58a1
+pillow==13.0.0 ; (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') \
+    --hash=sha256:64db2d39eee6e20e1168fb85be078f1ad4a9e5c8da6b795462d1933b7d86b1a9 \
+    --hash=sha256:5cd28e40a6774d00ca9eedbc3367deb5bba81f776d3feca88f9d15a78f166675
     # via
     #   mistral-common
     #   torchvision

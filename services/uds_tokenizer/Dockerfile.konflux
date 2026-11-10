@@ -13,7 +13,7 @@
 # limitations under the License.
 
 # Build stage
-FROM --platform=$TARGETPLATFORM quay.io/aipcc/base-images/cpu:3.5@sha256:5e132581d26f34a95289ce62ac5d996dccf3f31433b93f1d6ca967d8f4f15c09 AS builder
+FROM --platform=$TARGETPLATFORM quay.io/aipcc/base-images/cpu:3.5@sha256:772193da6a643cbb31874a291b04081813b3545324d95d895af01b43e76a4b9b AS builder
 
 # Set build arguments
 ARG TARGETPLATFORM
@@ -29,7 +29,7 @@ COPY requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Runtime stage
-FROM --platform=$TARGETPLATFORM quay.io/aipcc/base-images/cpu:3.5@sha256:5e132581d26f34a95289ce62ac5d996dccf3f31433b93f1d6ca967d8f4f15c09 AS runtime
+FROM --platform=$TARGETPLATFORM quay.io/aipcc/base-images/cpu:3.5@sha256:772193da6a643cbb31874a291b04081813b3545324d95d895af01b43e76a4b9b AS runtime
 
 # Set build arguments
 ARG HEALTH_PORT=8082
